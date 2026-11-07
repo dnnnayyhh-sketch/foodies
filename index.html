@@ -53,7 +53,7 @@
       background: rgba(16, 18, 22, 0.95);
       backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 12px 18px;
+      padding: 10px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -62,19 +62,16 @@
     .brand-group {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .brand-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: var(--gold-gradient);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      box-shadow: 0 4px 14px var(--gold-glow);
+    .brand-logo-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--gold-primary);
+      box-shadow: 0 0 10px var(--gold-glow);
     }
 
     .brand-title h1 {
@@ -169,7 +166,7 @@
       box-shadow: 0 4px 12px var(--gold-glow);
     }
 
-    /* هيكل الأقسام كأشرطة أفقية مماثلة للصورة */
+    /* هيكل الأقسام كأشرطة أفقية */
     .section-block {
       margin-bottom: 22px;
     }
@@ -217,7 +214,6 @@
     }
     .cards-slider::-webkit-scrollbar { display: none; }
 
-    /* بطاقة الوجبة الرأسية المتطورة */
     .food-card-v {
       flex: 0 0 165px;
       scroll-snap-align: start;
@@ -314,7 +310,6 @@
     .tab-view { display: none; }
     .tab-view.active { display: block; }
 
-    /* تفاصيل السلة والمعلومات */
     .panel-box {
       margin: 16px;
       background: var(--bg-surface);
@@ -413,7 +408,58 @@
       box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
     }
 
-    /* الشريط السفلي العائم */
+    /* أزرار الاتصال التفاعلية في صفحة معلوماتنا */
+    .direct-call-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .direct-call-card:active {
+      transform: scale(0.98);
+      background: rgba(229, 169, 60, 0.15);
+    }
+
+    .phone-info-box {
+      text-align: right;
+    }
+
+    .phone-lbl {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .phone-num {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--gold-primary);
+      direction: ltr;
+      display: inline-block;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-call-action {
+      background: var(--gold-gradient);
+      color: #101216;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 8px var(--gold-glow);
+    }
+
+    /* الشريط السفلي */
     .bottom-bar {
       position: fixed;
       bottom: 0;
@@ -459,17 +505,17 @@
 </head>
 <body>
 
-  <!-- رأس الموقع -->
+  <!-- رأس الموقع مع اللوغو الجديد -->
   <header>
     <div class="brand-group">
-      <div class="brand-icon">🍔</div>
+      <img src="https://i.postimg.cc/dthHNrBG/IMG-20261107-WA0006.jpg" alt="لوغو foodies" class="brand-logo-img">
       <div class="brand-title">
         <h1>foodies.a</h1>
         <span>القائمة الرقمية الفاخرة</span>
       </div>
     </div>
-    <a href="tel:+963998187778" class="btn-call">
-      <span>📞</span> اتصال
+    <a href="tel:0998187778" class="btn-call">
+      <span>📞</span> اتصال سريع
     </a>
   </header>
 
@@ -524,23 +570,45 @@
     </div>
   </section>
 
-  <!-- تبويب 3: معلومات المطعم -->
+  <!-- تبويب 3: معلومات المطعم وأزرار الاتصال المباشر -->
   <section id="view-info" class="tab-view">
     <div class="panel-box" style="text-align:center;">
-      <div style="font-size:3rem; margin-bottom:6px;">🍔</div>
+      <img src="https://i.postimg.cc/dthHNrBG/IMG-20261107-WA0006.jpg" alt="لوغو المطعم" style="width:75px; height:75px; border-radius:50%; border:2px solid var(--gold-primary); margin-bottom:8px; object-fit:cover; box-shadow:0 0 15px var(--gold-glow);">
       <h2 style="color:var(--gold-primary); font-size:1.3rem; font-weight:900;">مطعم foodies.a</h2>
       <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:18px;">المذاق الفاخر للبرغر والمأكولات الغربية الطازجة</p>
 
-      <div style="text-align:right; font-size:0.88rem; display:flex; flex-direction:column; gap:12px;">
-        <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px;">
-          <span style="color:var(--text-muted);">رقم الهاتف والطلبات:</span>
-          <span style="direction:ltr; font-weight:800;">+963 998 187 778</span>
-        </div>
-        <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px;">
-          <span style="color:var(--text-muted);">الخدمات:</span>
+      <div style="text-align:right; margin-bottom:18px;">
+        <span style="font-size:0.85rem; color:#fff; font-weight:800; display:block; margin-bottom:6px;">أرقام الاتصال المباشر والطلبات:</span>
+        
+        <!-- رقم 1 مع زر اتصال مباشر -->
+        <a href="tel:0998187778" class="direct-call-card">
+          <div class="phone-info-box">
+            <span class="phone-lbl">الخط الرئيسي & واتساب</span>
+            <span class="phone-num">0998 187 778</span>
+          </div>
+          <div class="btn-call-action">
+            <span>📞</span> اتصال
+          </div>
+        </a>
+
+        <!-- رقم 2 مع زر اتصال مباشر -->
+        <a href="tel:0982104022" class="direct-call-card">
+          <div class="phone-info-box">
+            <span class="phone-lbl">خط الطلبات الإضافي</span>
+            <span class="phone-num">0982 104 022</span>
+          </div>
+          <div class="btn-call-action">
+            <span>📞</span> اتصال
+          </div>
+        </a>
+      </div>
+
+      <div style="text-align:right; font-size:0.85rem; display:flex; flex-direction:column; gap:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:14px;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">الخدمات المتاحة:</span>
           <span style="font-weight:800;">صالة طعام - توصيل - تيك أواي</span>
         </div>
-        <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px;">
+        <div style="display:flex; justify-content:space-between;">
           <span style="color:var(--text-muted);">سرعة التجهيز:</span>
           <span style="font-weight:800;">15 - 25 دقيقة</span>
         </div>
@@ -566,7 +634,6 @@
   </nav>
 
   <script>
-    // بيانات الأقسام والوجبات الشاملة بصور Unsplash عالية الجودة ومجانية للأبد
     const menuStructure = [
       {
         id: "sec-برغر",
@@ -589,7 +656,7 @@
           { name: "كريسبي", desc: "فيليه دجاج مقرمش مع صوص الخردل بالعسل", img: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=400&q=80" },
           { name: "ناجتس", desc: "قطع دجاج مقلية ذهبية خفيفة ومحببة", img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80" },
           { name: "أسكالوب", desc: "شرائح دجاج بانيه مقلي بتتبيلة أعشاب راقية", img: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=400&q=80" },
-          { name: "زنجر", desc: "صدر دجاج حار ومقرمش مع خس ومايونيز مدخن", img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=400&q=80" },
+                 { name: "زنجر", desc: "صدر دجاج حار ومقرمش مع خس ومايونيز مدخن", img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=400&q=80" },
           { name: "بانيني إيطالي", desc: "ساندويش إيطالي محمص بالجبنة الذائبة", img: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80" },
           { name: "فرانسيسكو", desc: "دجاج متبل مع جبنة الموزاريلا والذرة وصوص الصويا", img: "https://images.unsplash.com/photo-1619860860774-1e2e17343432?auto=format&fit=crop&w=400&q=80" },
           { name: "فاهيتا", desc: "شرائح دجاج مع فلفل ملون وبصل وتتبيلة مكسيكية", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
@@ -604,7 +671,7 @@
         categoryName: "وجبات وستيك",
         items: [
           { name: "ستك دجاج", desc: "صدر دجاج مشوي متكامل مع صوص المشروم اللذيذ", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=400&q=80" },
-                    { name: "ستك لحم", desc: "قطعة تندرلوين طرية مشوية مع خضار سوتيه", img: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=400&q=80" },
+          { name: "ستك لحم", desc: "قطعة تندرلوين طرية مشوية مع خضار سوتيه", img: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=400&q=80" },
           { name: "سودة (كبدة)", desc: "سودة طازجة مطهوة بدبس الرمان والبهارات", img: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=400&q=80" },
           { name: "بطاطا وكاسة بطاطا", desc: "أصابع بطاطا مقرمشة ساخنة ببهارات فووديز", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=400&q=80" }
         ]
