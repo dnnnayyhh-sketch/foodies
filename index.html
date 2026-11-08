@@ -8,6 +8,8 @@
   <meta name="theme-color" content="#121316">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/dthHNrBG/IMG-20261107-WA0006.jpg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,7 +47,7 @@
       user-select: none;
     }
 
-    /* رأس الصفحة الاحترافي */
+    /* رأس الصفحة */
     header {
       position: sticky;
       top: 0;
@@ -101,7 +103,7 @@
       gap: 5px;
     }
 
-    /* حقل البحث الأنيق */
+    /* حقل البحث */
     .search-wrapper {
       padding: 14px 16px 8px;
     }
@@ -166,7 +168,7 @@
       box-shadow: 0 4px 12px var(--gold-glow);
     }
 
-    /* هيكل الأقسام كأشرطة أفقية */
+    /* هيكل الأقسام */
     .section-block {
       margin-bottom: 22px;
     }
@@ -202,7 +204,7 @@
       font-weight: 700;
     }
 
-    /* شريط السحب الأفقي للبطاقات Snap Scroll */
+    /* شريط السحب الأفقي للبطاقات */
     .cards-slider {
       display: flex;
       gap: 12px;
@@ -408,7 +410,6 @@
       box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
     }
 
-    /* أزرار الاتصال التفاعلية في صفحة معلوماتنا */
     .direct-call-card {
       background: var(--bg-card);
       border: 1px solid var(--border-gold);
@@ -501,11 +502,19 @@
       border-radius: 10px;
       font-weight: 900;
     }
+
+    .loading-spinner {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--gold-primary);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
 
-  <!-- رأس الموقع مع اللوغو الجديد -->
+  <!-- رأس الموقع -->
   <header>
     <div class="brand-group">
       <img src="https://i.postimg.cc/dthHNrBG/IMG-20261107-WA0006.jpg" alt="لوغو foodies" class="brand-logo-img">
@@ -519,7 +528,7 @@
     </a>
   </header>
 
-  <!-- تبويب 1: المنيو الرئيسي بشرائح السحب الأفقية -->
+  <!-- تبويب 1: المنيو الرئيسي -->
   <main id="view-menu" class="tab-view active">
     
     <div class="search-wrapper">
@@ -529,19 +538,15 @@
       </div>
     </div>
 
-    <!-- أزرار القفز المباشر بين الأقسام -->
+    <!-- شريط الأقسام المولد ديناميكياً -->
     <div class="nav-categories" id="categoriesBar">
       <button class="nav-cat-pill active" onclick="scrollToSection('all', this)">الكل</button>
-      <button class="nav-cat-pill" onclick="scrollToSection('sec-برغر', this)">البرغر</button>
-      <button class="nav-cat-pill" onclick="scrollToSection('sec-ساندويش-غربي', this)">ساندويش وغربي</button>
-      <button class="nav-cat-pill" onclick="scrollToSection('sec-وجبات-وستيك', this)">وجبات وستيك</button>
-      <button class="nav-cat-pill" onclick="scrollToSection('sec-مشاوي-ومناسف', this)">مشاوي ومناسف</button>
-      <button class="nav-cat-pill" onclick="scrollToSection('sec-أطباق-صحية-ومقبلات', this)">صحي ومقبلات</button>
-      <button class="nav-cat-pill" onclick="scrollToSection('sec-فطائر-وصاج', this)">فطائر وصاج</button>
     </div>
 
-    <!-- حاوية الأقسام الأفقية التفاعلية -->
-    <div id="sectionsContainer"></div>
+    <!-- حاوية الأقسام المجلوبة من قاعدة البيانات -->
+    <div id="sectionsContainer">
+      <div class="loading-spinner">جاري تحميل قائمة المنيو... 🍔✨</div>
+    </div>
 
   </main>
 
@@ -570,7 +575,7 @@
     </div>
   </section>
 
-  <!-- تبويب 3: معلومات المطعم وأزرار الاتصال المباشر -->
+  <!-- تبويب 3: معلومات المطعم -->
   <section id="view-info" class="tab-view">
     <div class="panel-box" style="text-align:center;">
       <img src="https://i.postimg.cc/dthHNrBG/IMG-20261107-WA0006.jpg" alt="لوغو المطعم" style="width:75px; height:75px; border-radius:50%; border:2px solid var(--gold-primary); margin-bottom:8px; object-fit:cover; box-shadow:0 0 15px var(--gold-glow);">
@@ -580,7 +585,6 @@
       <div style="text-align:right; margin-bottom:18px;">
         <span style="font-size:0.85rem; color:#fff; font-weight:800; display:block; margin-bottom:6px;">أرقام الاتصال المباشر والطلبات:</span>
         
-        <!-- رقم 1 مع زر اتصال مباشر -->
         <a href="tel:0998187778" class="direct-call-card">
           <div class="phone-info-box">
             <span class="phone-lbl">الخط الرئيسي & واتساب</span>
@@ -591,7 +595,6 @@
           </div>
         </a>
 
-        <!-- رقم 2 مع زر اتصال مباشر -->
         <a href="tel:0982104022" class="direct-call-card">
           <div class="phone-info-box">
             <span class="phone-lbl">خط الطلبات الإضافي</span>
@@ -634,80 +637,56 @@
   </nav>
 
   <script>
-    const menuStructure = [
+    const FIREBASE_DB_URL = "https://foodies-menu-b05de-default-rtdb.firebaseio.com/menu.json";
+    
+    // قائمة احتياطية في حال تعذر الاتصال بالشبكة
+    const fallbackMenu = [
+      {
+        id: "sec-فروج-ومشوي",
+        categoryName: "الفروج والمشوي",
+        items: [
+          { name: "فروج شواية", desc: "فروج مشوي على الشواية متبل بالبهارات الخاصة ومقمر يقدم مع الثوم والبطاطا والخبز المشروح", img: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=400&q=80" }
+        ]
+      },
       {
         id: "sec-برغر",
         categoryName: "البرغر",
         items: [
           { name: "همبرغر", desc: "لحم بقري بلدي مشوي مع الخس والطماطم والمخلل والصوص الخاص", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80" },
           { name: "سماش برغر", desc: "لحم مقرمش الأطراف مع طبقات جبنة التشيدر السائلة والخبز المحمص", img: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر جوسي", desc: "لحم محشو بخلطة أجبان تذوب مع القرمشة الأولى", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر بريسكت", desc: "لحم بريسكت مدخن ببطء مع صوص الباربكيو الفاخر", img: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=400&q=80" },
-          { name: "تشيكن برغر", desc: "صدر دجاج كرسبي ذهبي مع صوص الكولسلو المميز", img: "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر آنجوس", desc: "لحم بلاك آنجوس معتق وفاخر لأصحاب الذوق العالي", img: "https://images.unsplash.com/photo-1583032015879-c5c24e037f40?auto=format&fit=crop&w=400&q=80" },
-          { name: "ستك برغر", desc: "قطع ستيك لحم متبل بخلطة خاصة مع الفطر والبصل المكرمل", img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=400&q=80" }
-        ]
-      },
-      {
-        id: "sec-ساندويش-غربي",
-        categoryName: "ساندويش وغربي",
-        items: [
-          { name: "وجبة كنتاكي دبابيس", desc: "دبابيس مقرمشة تقدم مع البطاطا والثومية", img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=400&q=80" },
-          { name: "كريسبي", desc: "فيليه دجاج مقرمش مع صوص الخردل بالعسل", img: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=400&q=80" },
-          { name: "ناجتس", desc: "قطع دجاج مقلية ذهبية خفيفة ومحببة", img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80" },
-          { name: "أسكالوب", desc: "شرائح دجاج بانيه مقلي بتتبيلة أعشاب راقية", img: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=400&q=80" },
-                 { name: "زنجر", desc: "صدر دجاج حار ومقرمش مع خس ومايونيز مدخن", img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=400&q=80" },
-          { name: "بانيني إيطالي", desc: "ساندويش إيطالي محمص بالجبنة الذائبة", img: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80" },
-          { name: "فرانسيسكو", desc: "دجاج متبل مع جبنة الموزاريلا والذرة وصوص الصويا", img: "https://images.unsplash.com/photo-1619860860774-1e2e17343432?auto=format&fit=crop&w=400&q=80" },
-          { name: "فاهيتا", desc: "شرائح دجاج مع فلفل ملون وبصل وتتبيلة مكسيكية", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
-          { name: "مكسيكي", desc: "خلطة لحم أو دجاج حار ببهارات مكسيكية لا تقاوم", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=400&q=80" },
-          { name: "شيش طاووق", desc: "مكعبات دجاج مشوية بتتبيلة الليمون واللبن والثوم", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80" },
-          { name: "شقف", desc: "لحم غنم طري مشوي على الفحم مع البقدونس", img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80" },
-          { name: "شاورما", desc: "شاورما بتتبيلة أصيلة مع الثومية ومخلل الخيار المقرمش", img: "https://images.unsplash.com/photo-1633337474565-12c5b3644265?auto=format&fit=crop&w=400&q=80" }
-        ]
-      },
-      {
-        id: "sec-وجبات-وستيك",
-        categoryName: "وجبات وستيك",
-        items: [
-          { name: "ستك دجاج", desc: "صدر دجاج مشوي متكامل مع صوص المشروم اللذيذ", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=400&q=80" },
-          { name: "ستك لحم", desc: "قطعة تندرلوين طرية مشوية مع خضار سوتيه", img: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=400&q=80" },
-          { name: "سودة (كبدة)", desc: "سودة طازجة مطهوة بدبس الرمان والبهارات", img: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=400&q=80" },
-          { name: "بطاطا وكاسة بطاطا", desc: "أصابع بطاطا مقرمشة ساخنة ببهارات فووديز", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=400&q=80" }
-        ]
-      },
-      {
-        id: "sec-مشاوي-ومناسف",
-        categoryName: "مشاوي ومناسف",
-        items: [
-          { name: "مناسف لحم أو دجاج", desc: "منسف ملكي بالأرز الفاخر والمكسرات (توصية قبل بساعة)", img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80" },
-          { name: "سمك مشط", desc: "سمك مشط طازج متبل بالثوم والليمون ومشوي بعناية", img: "https://images.unsplash.com/photo-1534939561126-855b8675edd7?auto=format&fit=crop&w=400&q=80" },
-          { name: "سمك أجاج", desc: "سمك بحري مشوي على الفحم أو بالفرن", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=400&q=80" },
-          { name: "قريدس (جمبري)", desc: "جمبري مشوي مع الزبدة والثوم والأعشاب العطرية", img: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=400&q=80" },
-          { name: "جوانح مشوية", desc: "أجنحة دجاج مشوية بصوص الباربكيو المدخن", img: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=400&q=80" }
-        ]
-      },
-      {
-        id: "sec-أطباق-صحية-ومقبلات",
-        categoryName: "أطباق صحية ومقبلات",
-        items: [
-          { name: "وجبات صحية (أرز + شوربة)", desc: "وجبة خفيفة ومتوازنة للمهتمين بالرشاقة", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80" },
-          { name: "سلطة فتوش", desc: "خضار طازجة مع خبز محمص ورمان وسماق", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80" },
-          { name: "كبة مقلية", desc: "أقراص مقرمشة محشوة باللحم البلدي والمكسرات", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=400&q=80" },
-          { name: "مقرمشات فوديز", desc: "سناك ونقانق ومقرمشات محضرة يومياً", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=400&q=80" }
-        ]
-      },
-      {
-        id: "sec-فطائر-وصاج",
-        categoryName: "فطائر وصاج",
-        items: [
-          { name: "منافيش عالصاج", desc: "فطائر ومناقيش صاج ساخنة (زعتر، جبنة، محمرة)", img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=400&q=80" }
+          { name: "برغر جوسي", desc: "لحم محشو بخلطة أجبان تذوب مع القرمشة الأولى", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80" }
         ]
       }
     ];
 
+    let menuStructure = [];
     let cart = {};
     let currentOrderType = "توصيل طلب";
+
+    async function fetchLiveMenu() {
+      try {
+        const res = await fetch(FIREBASE_DB_URL);
+        const data = await res.json();
+        if (data) {
+          menuStructure = Array.isArray(data) ? data : Object.values(data);
+        } else {
+          menuStructure = fallbackMenu;
+        }
+      } catch (err) {
+        menuStructure = fallbackMenu;
+      }
+      buildCategoriesNav();
+      renderHorizontalMenu();
+    }
+
+    function buildCategoriesNav() {
+      const nav = document.getElementById("categoriesBar");
+      let html = `<button class="nav-cat-pill active" onclick="scrollToSection('all', this)">الكل</button>`;
+      menuStructure.forEach(sec => {
+        html += `<button class="nav-cat-pill" onclick="scrollToSection('${sec.id}', this)">${sec.categoryName}</button>`;
+      });
+      nav.innerHTML = html;
+    }
 
     function renderHorizontalMenu(filterText = "") {
       const container = document.getElementById("sectionsContainer");
@@ -715,14 +694,18 @@
       let foundAny = false;
 
       menuStructure.forEach(sec => {
-        const filteredItems = sec.items.filter(it => 
-          it.name.toLowerCase().includes(filterText) || it.desc.toLowerCase().includes(filterText)
+        const items = sec.items || [];
+        const filteredItems = items.filter(it => 
+          (it.name && it.name.toLowerCase().includes(filterText)) || 
+          (it.desc && it.desc.toLowerCase().includes(filterText))
         );
 
         if (filteredItems.length > 0) {
           foundAny = true;
           html += `
             <section class="section-block" id="${sec.id}">
+              <div class="section-head">
+                      <section class="section-block" id="${sec.id}">
               <div class="section-head">
                 <h2>${sec.categoryName}</h2>
                 <span class="section-count">${filteredItems.length} صنف</span>
@@ -731,12 +714,12 @@
                 ${filteredItems.map(item => `
                   <div class="food-card-v">
                     <div class="img-box">
-                      <img src="${item.img}" alt="${item.name}" loading="lazy">
+                      <img src="${item.img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80'}" alt="${item.name}" loading="lazy">
                     </div>
                     <div class="food-info">
                       <div>
                         <div class="item-title">${item.name}</div>
-                        <div class="item-desc">${item.desc}</div>
+                        <div class="item-desc">${item.desc || ''}</div>
                       </div>
                       <div class="card-footer">
                         <button class="btn-add-circle" title="إضافة" onclick="addItem('${item.name}')">+</button>
@@ -870,7 +853,7 @@
     }
 
     window.onload = () => {
-      renderHorizontalMenu();
+      fetchLiveMenu();
     };
   </script>
 </body>
