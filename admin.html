@@ -95,7 +95,6 @@
       margin-top: 8px;
     }
 
-    /* شجرة عرض الأقسام والوجبات */
     .cat-box {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -168,7 +167,6 @@
     <p>إدارة الأقسام والوجبات وتحديث المنيو لحظياً</p>
   </header>
 
-  <!-- بطاقة إضافة قسم جديد -->
   <section class="card">
     <h2>إضافة قسم جديد</h2>
     <div class="form-group">
@@ -177,7 +175,6 @@
     <button class="btn" onclick="addCategory()">+ إضافة القسم</button>
   </section>
 
-  <!-- بطاقة إضافة وجبة -->
   <section class="card">
     <h2>إضافة وجبة ضمن قسم</h2>
     
@@ -204,7 +201,6 @@
     <button class="btn" onclick="addItem()">+ حفظ الوجبة في المنيو</button>
   </section>
 
-  <!-- بطاقة استعراض وإدارة المنيو بالكامل -->
   <section class="card">
     <h2>الأقسام والوجبات الحالية</h2>
     <button class="btn btn-secondary" onclick="seedInitialMenu()" style="margin-bottom: 14px;">
@@ -217,6 +213,7 @@
     const DB_URL = "https://foodies-menu-b05de-default-rtdb.firebaseio.com/menu.json";
     let currentMenu = [];
 
+    // تم تحديث هذه القائمة بصور الأسماك الجديدة لتُرفع بشكل صحيح
     const defaultInitialData = [
       {
         id: "sec-فروج-ومشوي",
@@ -271,8 +268,8 @@
         categoryName: "مشاوي ومناسف",
         items: [
           { name: "مناسف لحم أو دجاج", desc: "منسف ملكي بالأرز الفاخر والمكسرات (توصية قبل بساعة)", img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80" },
-          { name: "سمك مشط", desc: "سمك مشط طازج متبل بالثوم والليمون ومشوي بعناية", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=400&q=80" },
-          { name: "سمك أجاج", desc: "سمك بحري مشوي على الفحم أو بالفرن", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
+          { name: "سمك مشط", desc: "سمك مشط طازج متبل بالثوم والليمون ومشوي بعناية", img: "https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?auto=format&fit=crop&w=400&q=80" },
+          { name: "سمك أجاج", desc: "سمك بحري مشوي على الفحم أو بالفرن", img: "https://images.unsplash.com/photo-1534080564583-6be75777b70a?auto=format&fit=crop&w=400&q=80" },
           { name: "قريدس (جمبري)", desc: "جمبري مشوي مع الزبدة والثوم والأعشاب العطرية", img: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=400&q=80" },
           { name: "جوانح مشوية", desc: "أجنحة دجاج مشوية بصوص الباربكيو المدخن", img: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=400&q=80" }
         ]
@@ -327,10 +324,10 @@
     }
 
     async function seedInitialMenu() {
-      if (!confirm("هل تريد رفع الأصناف الافتراضية كاملة إلى قاعدة البيانات؟")) return;
+      if (!confirm("هل تريد رفع الأصناف الحالية تلقائياً إلى قاعدة البيانات؟ سيتم مسح البيانات القديمة.")) return;
       currentMenu = defaultInitialData;
       await saveMenu();
-      alert("تم رفع بيانات المنيو بنجاح!");
+      alert("تم رفع بيانات المنيو بنجاح! يمكنك الآن التحقق من الصفحة الرئيسية.");
     }
 
     function renderSelect() {
@@ -429,5 +426,4 @@
     window.onload = loadMenu;
   </script>
 </body>
-  </html>
-  
+</html>
