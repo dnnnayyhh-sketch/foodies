@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم foodies.a</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body: #101216;
+      --bg-surface: #181b22;
+      --bg-card: #1f232c;
+      --gold-primary: #e5a93c;
+      --gold-gradient: linear-gradient(135deg, #f6c065 0%, #d49326 100%);
+      --text-white: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --danger: #ef4444;
+      --success: #22c55e;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+    body { background-color: var(--bg-body); color: var(--text-white); padding: 16px; padding-bottom: 60px; }
+
+    header {
+      text-align: center;
+      padding: 14px 0 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 20px;
+    }
+    header h1 { font-size: 1.3rem; color: var(--gold-primary); font-weight: 900; }
+    header p { font-size: 0.8rem; color: var(--text-muted); }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card h2::before {
+      content: "";
+      width: 4px;
+      height: 16px;
+      background: var(--gold-gradient);
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; }
+    .form-group label span { color: var(--gold-primary); font-size: 0.7rem; }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fff;
+      font-size: 0.88rem;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold-primary); }
+
+    .btn {
+      width: 100%;
+      background: var(--gold-gradient);
+      color: #101216;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      margin-top: 8px;
+    }
+
+    /* شجرة عرض الأقسام والوجبات */
+    .cat-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .cat-header {
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .cat-title { font-weight: 800; font-size: 0.92rem; color: var(--gold-primary); }
+    .btn-del-cat {
+      background: none;
+      border: none;
+      color: var(--danger);
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.84rem;
+    }
+    .item-row:last-child { border-bottom: none; }
+    .item-info { display: flex; align-items: center; gap: 10px; }
+    .item-thumb {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #111;
+    }
+    .btn-del-item {
+      background: none;
+      border: none;
+      color: #f87171;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      font-weight: 800;
+      color: var(--gold-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loadingOverlay">جاري معالجة البيانات...</div>
+
+  <header>
+    <h1>لوحة إدارة المنيو | foodies.a</h1>
+    <p>إدارة الأقسام والوجبات وتحديث المنيو لحظياً</p>
+  </header>
+
+  <!-- بطاقة إضافة قسم جديد -->
+  <section class="card">
+    <h2>إضافة قسم جديد</h2>
+    <div class="form-group">
+      <input type="text" id="newCatName" placeholder="اسم القسم الجديد (مثلاً: حلويات، مشروبات)">
+    </div>
+    <button class="btn" onclick="addCategory()">+ إضافة القسم</button>
+  </section>
+
+  <!-- بطاقة إضافة وجبة -->
+  <section class="card">
+    <h2>إضافة وجبة ضمن قسم</h2>
+    
+    <div class="form-group">
+      <label>اختر القسم <span>(إلزامي)</span></label>
+      <select id="itemCatSelect"></select>
+    </div>
+
+    <div class="form-group">
+      <label>اسم الوجبة <span>(إلزامي)</span></label>
+      <input type="text" id="itemName" placeholder="اسم الوجبة">
+    </div>
+
+    <div class="form-group">
+      <label>وصف الوجبة <span>(اختياري)</span></label>
+      <textarea id="itemDesc" rows="2" placeholder="المكونات والتفاصيل"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>رابط الصورة <span>(اختياري)</span></label>
+      <input type="url" id="itemImg" placeholder="https://...">
+    </div>
+
+    <button class="btn" onclick="addItem()">+ حفظ الوجبة في المنيو</button>
+  </section>
+
+  <!-- بطاقة استعراض وإدارة المنيو بالكامل -->
+  <section class="card">
+    <h2>الأقسام والوجبات الحالية</h2>
+    <button class="btn btn-secondary" onclick="seedInitialMenu()" style="margin-bottom: 14px;">
+      🔄 رفع الأصناف الحالية تلقائياً إلى قاعدة البيانات (مرة واحدة)
+    </button>
+    <div id="menuStructureView"></div>
+  </section>
+
+  <script>
+    const DB_URL = "https://foodies-menu-b05de-default-rtdb.firebaseio.com/menu.json";
+    let currentMenu = [];
+
+    const defaultInitialData = [
+      {
+        id: "sec-فروج-ومشوي",
+        categoryName: "الفروج والمشوي",
+        items: [
+          { name: "فروج شواية", desc: "فروج مشوي على الشواية متبل بالبهارات الخاصة ومقمر يقدم مع الثوم والبطاطا والخبز المشروح", img: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=400&q=80" }
+        ]
+      },
+      {
+        id: "sec-برغر",
+        categoryName: "البرغر",
+        items: [
+          { name: "همبرغر", desc: "لحم بقري بلدي مشوي مع الخس والطماطم والمخلل والصوص الخاص", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80" },
+          { name: "سماش برغر", desc: "لحم مقرمش الأطراف مع طبقات جبنة التشيدر السائلة والخبز المحمص", img: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=400&q=80" },
+          { name: "برغر جوسي", desc: "لحم محشو بخلطة أجبان تذوب مع القرمشة الأولى", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80" },
+          { name: "برغر بريسكت", desc: "لحم بريسكت مدخن ببطء مع صوص الباربكيو الفاخر", img: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=400&q=80" },
+          { name: "تشيكن برغر", desc: "صدر دجاج كرسبي ذهبي مع صوص الكولسلو المميز", img: "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=400&q=80" },
+          { name: "برغر آنجوس", desc: "لحم بلاك آنجوس معتق وفاخر لأصحاب الذوق العالي", img: "https://images.unsplash.com/photo-1583032015879-c5c24e037f40?auto=format&fit=crop&w=400&q=80" },
+          { name: "ستك برغر", desc: "قطع ستيك لحم متبل بخلطة خاصة مع الفطر والبصل المكرمل", img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=400&q=80" }
+        ]
+      },
+      {
+        id: "sec-ساندويش-غربي",
+        categoryName: "ساندويش وغربي",
+        items: [
+          { name: "وجبة كنتاكي دبابيس", desc: "دبابيس مقرمشة تقدم مع البطاطا والثومية", img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=400&q=80" },
+          { name: "كريسبي", desc: "فيليه دجاج مقرمش مع صوص الخردل بالعسل", img: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=400&q=80" },
+          { name: "ناجتس", desc: "قطع دجاج مقلية ذهبية خفيفة ومحببة", img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80" },
+          { name: "أسكالوب", desc: "شرائح دجاج بانيه مقلي بتتبيلة أعشاب راقية", img: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=400&q=80" },
+          { name: "زنجر", desc: "صدر دجاج حار ومقرمش مع خس ومايونيز مدخن", img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=400&q=80" },
+          { name: "بانيني إيطالي", desc: "ساندويش إيطالي محمص بالجبنة الذائبة", img: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80" },
+          { name: "فرانسيسكو", desc: "دجاج متبل مع جبنة الموزاريلا والذرة وصوص الصويا", img: "https://images.unsplash.com/photo-1619860860774-1e2e17343432?auto=format&fit=crop&w=400&q=80" },
+          { name: "فاهيتا", desc: "شرائح دجاج مع فلفل ملون وبصل وتتبيلة مكسيكية", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
+          { name: "مكسيكي", desc: "خلطة لحم أو دجاج حار ببهارات مكسيكية لا تقاوم", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=400&q=80" },
+          { name: "شيش طاووق", desc: "مكعبات دجاج مشوية بتتبيلة الليمون واللبن والثوم", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80" },
+          { name: "شقف", desc: "لحم غنم طري مشوي على الفحم مع البقدونس", img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80" },
+          { name: "شاورما", desc: "شاورما بتتبيلة أصيلة مع الثومية ومخلل الخيار المقرمش", img: "https://images.unsplash.com/photo-1633337474565-12c5b3644265?auto=format&fit=crop&w=400&q=80" }
+        ]
+      },
+      {
+        id: "sec-وجبات-وستيك",
+        categoryName: "وجبات وستيك",
+        items: [
+          { name: "ستك دجاج", desc: "صدر دجاج مشوي متكامل مع صوص المشروم اللذيذ", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=400&q=80" },
+          { name: "ستك لحم", desc: "قطعة تندرلوين طرية مشوية مع خضار سوتيه", img: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=400&q=80" },
+          { name: "سودة (كبدة)", desc: "سودة طازجة مطهوة بدبس الرمان والبهارات", img: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=400&q=80" },
+          { name: "بطاطا وكاسة بطاطا", desc: "أصابع بطاطا مقرمشة ساخنة ببهارات فووديز", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=400&q=80" }
+        ]
+      },
+      {
+        id: "sec-مشاوي-ومناسف",
+        categoryName: "مشاوي ومناسف",
+        items: [
+          { name: "مناسف لحم أو دجاج", desc: "منسف ملكي بالأرز الفاخر والمكسرات (توصية قبل بساعة)", img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80" },
+          { name: "سمك مشط", desc: "سمك مشط طازج متبل بالثوم والليمون ومشوي بعناية", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=400&q=80" },
+          { name: "سمك أجاج", desc: "سمك بحري مشوي على الفحم أو بالفرن", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
+          { name: "قريدس (جمبري)", desc: "جمبري مشوي مع الزبدة والثوم والأعشاب العطرية", img: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=400&q=80" },
+          { name: "جوانح مشوية", desc: "أجنحة دجاج مشوية بصوص الباربكيو المدخن", img: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=400&q=80" }
+        ]
+      },
+      {
+        id: "sec-أطباق-صحية-ومقبلات",
+        categoryName: "أطباق صحية ومقبلات",
+        items: [
+          { name: "وجبات صحية (أرز + شوربة)", desc: "وجبة خفيفة ومتوازنة للمهتمين بالرشاقة", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80" },
+          { name: "سلطة فتوش", desc: "خضار طازجة مع خبز محمص ورمان وسماق", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80" },
+          { name: "كبة مقلية", desc: "أقراص مقرمشة محشوة باللحم البلدي والمكسرات", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=400&q=80" },
+          { name: "مقرمشات فوديز", desc: "سناك ونقانق ومقرمشات محضرة يومياً", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=400&q=80" }
+        ]
+      },
+      {
+        id: "sec-فطائر-وصاج",
+        categoryName: "فطائر وصاج",
+        items: [
+          { name: "منافيش عالصاج", desc: "فطائر ومناقيش صاج ساخنة (زعتر، جبنة، محمرة)", img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=400&q=80" }
+        ]
+      }
+    ];
+
+    async function loadMenu() {
+      showLoading(true);
+      try {
+        const res = await fetch(DB_URL);
+        const data = await res.json();
+        currentMenu = Array.isArray(data) ? data : (data ? Object.values(data) : []);
+        renderSelect();
+        renderView();
+      } catch (err) {
+        alert("خطأ في الاتصال بقاعدة البيانات");
+      }
+      showLoading(false);
+    }
+
+    async function saveMenu() {
+      showLoading(true);
+      try {
+        await fetch(DB_URL, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(currentMenu)
+        });
+        renderSelect();
+        renderView();
+      } catch (err) {
+        alert("فشل حفظ التعديلات");
+      }
+      showLoading(false);
+    }
+
+    async function seedInitialMenu() {
+      if (!confirm("هل تريد رفع الأصناف الافتراضية كاملة إلى قاعدة البيانات؟")) return;
+      currentMenu = defaultInitialData;
+      await saveMenu();
+      alert("تم رفع بيانات المنيو بنجاح!");
+    }
+
+    function renderSelect() {
+      const select = document.getElementById("itemCatSelect");
+      if (currentMenu.length === 0) {
+        select.innerHTML = `<option value="">لا توجد أقسام حالياً</option>`;
+        return;
+      }
+      select.innerHTML = currentMenu.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
+    }
+
+    function renderView() {
+      const box = document.getElementById("menuStructureView");
+      if (currentMenu.length === 0) {
+        box.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:10px;">لا توجد أقسام مضافة بعد.</p>`;
+        return;
+      }
+
+      box.innerHTML = currentMenu.map((cat, catIdx) => `
+        <div class="cat-box">
+          <div class="cat-header">
+            <span class="cat-title">${cat.categoryName} (${cat.items ? cat.items.length : 0})</span>
+            <button class="btn-del-cat" onclick="deleteCategory(${catIdx})">حذف القسم 🗑️</button>
+          </div>
+          <div>
+            ${(cat.items || []).map((it, itIdx) => `
+              <div class="item-row">
+                <div class="item-info">
+                  <img src="${it.img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=100&q=80'}" class="item-thumb">
+                  <div>
+                    <div style="font-weight:700;">${it.name}</div>
+                    <div style="font-size:0.75rem; color:var(--text-muted);">${it.desc || 'بدون وصف'}</div>
+                  </div>
+                </div>
+                <button class="btn-del-item" onclick="deleteItem(${catIdx}, ${itIdx})">✕</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function addCategory() {
+      const input = document.getElementById("newCatName");
+      const name = input.value.trim();
+      if (!name) return alert("يرجى كتابة اسم القسم!");
+
+      const id = "sec-" + name.replace(/\s+/g, '-').toLowerCase();
+      currentMenu.push({ id, categoryName: name, items: [] });
+      input.value = "";
+      await saveMenu();
+    }
+
+    async function deleteCategory(catIdx) {
+      if (!confirm(`هل أنت متأكد من حذف قسم "${currentMenu[catIdx].categoryName}" بكل وجباته؟`)) return;
+      currentMenu.splice(catIdx, 1);
+      await saveMenu();
+    }
+
+    async function addItem() {
+      const catId = document.getElementById("itemCatSelect").value;
+      const name = document.getElementById("itemName").value.trim();
+      const desc = document.getElementById("itemDesc").value.trim();
+      let img = document.getElementById("itemImg").value.trim();
+
+      if (!catId) return alert("يرجى اختيار قسم أولاً!");
+      if (!name) return alert("يرجى إدخال اسم الوجبة!");
+
+      if (!img) {
+        img = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80";
+      }
+
+      const cat = currentMenu.find(c => c.id === catId);
+      if (!cat.items) cat.items = [];
+
+      cat.items.push({ name, desc, img });
+
+      document.getElementById("itemName").value = "";
+      document.getElementById("itemDesc").value = "";
+      document.getElementById("itemImg").value = "";
+
+      await saveMenu();
+      alert("تمت إضافة الوجبة بنجاح!");
+    }
+
+    async function deleteItem(catIdx, itIdx) {
+      if (!confirm("هل تريد حذف هذه الوجبة؟")) return;
+      currentMenu[catIdx].items.splice(itIdx, 1);
+      await saveMenu();
+    }
+
+    function showLoading(show) {
+      document.getElementById("loadingOverlay").style.display = show ? "flex" : "none";
+    }
+
+    window.onload = loadMenu;
+  </script>
+</body>
+  </html>
+  
