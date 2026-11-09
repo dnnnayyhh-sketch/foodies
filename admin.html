@@ -214,16 +214,6 @@
       object-fit: cover;
       background: #111;
     }
-    .item-price-tag {
-      display: inline-block;
-      background: rgba(229, 169, 60, 0.15);
-      color: var(--gold-primary);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      margin-top: 3px;
-    }
     .item-actions {
       display: flex;
       align-items: center;
@@ -299,11 +289,6 @@
     </div>
 
     <div class="form-group">
-      <label>السعر (اختياري)</label>
-      <input type="text" id="itemPrice" placeholder="مثلاً: 25,000 ل.س أو 25000">
-    </div>
-
-    <div class="form-group">
       <label>وصف الوجبة (اختياري)</label>
       <textarea id="itemDesc" rows="2" placeholder="المكونات والتفاصيل"></textarea>
     </div>
@@ -342,7 +327,6 @@
     const DB_URL = "https://foodies-menu-b05de-default-rtdb.firebaseio.com/menu.json";
     let currentMenu = [];
 
-    // تخزين كود الصورة المضغوطة المرفوعة
     let compressedImageBase64 = "";
 
     let editingState = {
@@ -365,7 +349,6 @@
       if (e.key === "Enter") checkPin();
     });
 
-    // دالة ضغط الصور وتصغيرها إلى أبعاد خفيفة جداً لسرعة التحميل
     function compressImage(file, maxWidth = 480, maxHeight = 480, quality = 0.65) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -395,7 +378,6 @@
             const ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0, width, height);
 
-            // استخراج الصورة مضغوطة بصيغة JPEG الخفيفة
             const compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
             resolve(compressedDataUrl);
           };
@@ -415,7 +397,7 @@
         document.getElementById("previewImgEl").src = compressedImageBase64;
         document.getElementById("previewBox").style.display = "flex";
         document.getElementById("previewStatus").innerText = "تم ضغط الصورة بنجاح من الاستوديو";
-        document.getElementById("itemImg").value = ""; // تفريغ الرابط الخارجي
+        document.getElementById("itemImg").value = "";
       } catch (err) {
         alert("حدث خطأ أثناء معالجة وضغط الصورة");
       }
@@ -434,76 +416,76 @@
         id: "sec-فروج-ومشوي",
         categoryName: "الفروج والمشوي",
         items: [
-          { name: "فروج شواية", desc: "فروج مشوي على الشواية متبل بالبهارات الخاصة ومقمر يقدم مع الثوم والبطاطا والخبز المشروح", price: "", img: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=400&q=80" }
+          { name: "فروج شواية", desc: "فروج مشوي على الشواية متبل بالبهارات الخاصة ومقمر يقدم مع الثوم والبطاطا والخبز المشروح", img: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-برغر",
         categoryName: "البرغر",
         items: [
-          { name: "همبرغر", desc: "لحم بقري بلدي مشوي مع الخس والطماطم والمخلل والصوص الخاص", price: "", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80" },
-          { name: "سماش برغر", desc: "لحم مقرمش الأطراف مع طبقات جبنة التشيدر السائلة والخبز المحمص", price: "", img: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر جوسي", desc: "لحم محشو بخلطة أجبان تذوب مع القرمشة الأولى", price: "", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر بريسكت", desc: "لحم بريسكت مدخن ببطء مع صوص الباربكيو الفاخر", price: "", img: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=400&q=80" },
-          { name: "تشيكن برغر", desc: "صدر دجاج كرسبي ذهبي مع صوص الكولسلو المميز", price: "", img: "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر آنجوس", desc: "لحم بلاك آنجوس معتق وفاخر لأصحاب الذوق العالي", price: "", img: "https://images.unsplash.com/photo-1583032015879-c5c24e037f40?auto=format&fit=crop&w=400&q=80" },
-          { name: "ستك برغر", desc: "قطع ستيك لحم متبل بخلطة خاصة مع الفطر والبصل المكرمل", price: "", img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=400&q=80" }
+          { name: "همبرغر", desc: "لحم بقري بلدي مشوي مع الخس والطماطم والمخلل والصوص الخاص", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80" },
+          { name: "سماش برغر", desc: "لحم مقرمش الأطراف مع طبقات جبنة التشيدر السائلة والخبز المحمص", img: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=400&q=80" },
+          { name: "برغر جوسي", desc: "لحم محشو بخلطة أجبان تذوب مع القرمشة الأولى", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80" },
+          { name: "برغر بريسكت", desc: "لحم بريسكت مدخن ببطء مع صوص الباربكيو الفاخر", img: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=400&q=80" },
+          { name: "تشيكن برغر", desc: "صدر دجاج كرسبي ذهبي مع صوص الكولسلو المميز", img: "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=400&q=80" },
+          { name: "برغر آنجوس", desc: "لحم بلاك آنجوس معتق وفاخر لأصحاب الذوق العالي", img: "https://images.unsplash.com/photo-1583032015879-c5c24e037f40?auto=format&fit=crop&w=400&q=80" },
+          { name: "ستك برغر", desc: "قطع ستيك لحم متبل بخلطة خاصة مع الفطر والبصل المكرمل", img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-ساندويش-غربي",
         categoryName: "ساندويش وغربي",
         items: [
-          { name: "وجبة كنتاكي دبابيس", desc: "دبابيس مقرمشة تقدم مع البطاطا والثومية", price: "", img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=400&q=80" },
-          { name: "كريسبي", desc: "فيليه دجاج مقرمش مع صوص الخردل بالعسل", price: "", img: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=400&q=80" },
-          { name: "ناجتس", desc: "قطع دجاج مقلية ذهبية خفيفة ومحببة", price: "", img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80" },
-          { name: "أسكالوب", desc: "شرائح دجاج بانيه مقلي بتتبيلة أعشاب راقية", price: "", img: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=400&q=80" },
-          { name: "زنجر", desc: "صدر دجاج حار ومقرمش مع خس ومايونيز مدخن", price: "", img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=400&q=80" },
-          { name: "بانيني إيطالي", desc: "ساندويش إيطالي محمص بالجبنة الذائبة", price: "", img: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80" },
-          { name: "فرانسيسكو", desc: "دجاج متبل مع جبنة الموزاريلا والذرة وصوص الصويا", price: "", img: "https://images.unsplash.com/photo-1619860860774-1e2e17343432?auto=format&fit=crop&w=400&q=80" },
-          { name: "فاهيتا", desc: "شرائح دجاج مع فلفل ملون وبصل وتتبيلة مكسيكية", price: "", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
-          { name: "مكسيكي", desc: "خلطة لحم أو دجاج حار ببهارات مكسيكية لا تقاوم", price: "", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=400&q=80" },
-          { name: "شيش طاووق", desc: "مكعبات دجاج مشوية بتتبيلة الليمون واللبن والثوم", price: "", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80" },
-          { name: "شقف", desc: "لحم غنم طري مشوي على الفحم مع البقدونس", price: "", img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80" },
-          { name: "شاورما", desc: "شاورما بتتبيلة أصيلة مع الثومية ومخلل الخيار المقرمش", price: "", img: "https://images.unsplash.com/photo-1633337474565-12c5b3644265?auto=format&fit=crop&w=400&q=80" }
+          { name: "وجبة كنتاكي دبابيس", desc: "دبابيس مقرمشة تقدم مع البطاطا والثومية", img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=400&q=80" },
+          { name: "كريسبي", desc: "فيليه دجاج مقرمش مع صوص الخردل بالعسل", img: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=400&q=80" },
+          { name: "ناجتس", desc: "قطع دجاج مقلية ذهبية خفيفة ومحببة", img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80" },
+          { name: "أسكالوب", desc: "شرائح دجاج بانيه مقلي بتتبيلة أعشاب راقية", img: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=400&q=80" },
+          { name: "زنجر", desc: "صدر دجاج حار ومقرمش مع خس ومايونيز مدخن", img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=400&q=80" },
+          { name: "بانيني إيطالي", desc: "ساندويش إيطالي محمص بالجبنة الذائبة", img: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80" },
+          { name: "فرانسيسكو", desc: "دجاج متبل مع جبنة الموزاريلا والذرة وصوص الصويا", img: "https://images.unsplash.com/photo-1619860860774-1e2e17343432?auto=format&fit=crop&w=400&q=80" },
+          { name: "فاهيتا", desc: "شرائح دجاج مع فلفل ملون وبصل وتتبيلة مكسيكية", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
+          { name: "مكسيكي", desc: "خلطة لحم أو دجاج حار ببهارات مكسيكية لا تقاوم", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=400&q=80" },
+          { name: "شيش طاووق", desc: "مكعبات دجاج مشوية بتتبيلة الليمون واللبن والثوم", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80" },
+          { name: "شقف", desc: "لحم غنم طري مشوي على الفحم مع البقدونس", img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80" },
+          { name: "شاورما", desc: "شاورما بتتبيلة أصيلة مع الثومية ومخلل الخيار المقرمش", img: "https://images.unsplash.com/photo-1633337474565-12c5b3644265?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-وجبات-وستيك",
         categoryName: "وجبات وستيك",
         items: [
-          { name: "ستك دجاج", desc: "صدر دجاج مشوي متكامل مع صوص المشروم اللذيذ", price: "", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=400&q=80" },
-          { name: "ستك لحم", desc: "قطعة تندرلوين طرية مشوية مع خضار سوتيه", price: "", img: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=400&q=80" },
-          { name: "سودة (كبدة)", desc: "سودة طازجة مطهوة بدبس الرمان والبهارات", price: "", img: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=400&q=80" },
-          { name: "بطاطا وكاسة بطاطا", desc: "أصابع بطاطا مقرمشة ساخنة ببهارات فووديز", price: "", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=400&q=80" }
+          { name: "ستك دجاج", desc: "صدر دجاج مشوي متكامل مع صوص المشروم اللذيذ", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=400&q=80" },
+          { name: "ستك لحم", desc: "قطعة تندرلوين طرية مشوية مع خضار سوتيه", img: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=400&q=80" },
+          { name: "سودة (كبدة)", desc: "سودة طازجة مطهوة بدبس الرمان والبهارات", img: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=400&q=80" },
+          { name: "بطاطا وكاسة بطاطا", desc: "أصابع بطاطا مقرمشة ساخنة ببهارات فووديز", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-مشاوي-ومناسف",
         categoryName: "مشاوي ومناسف",
         items: [
-          { name: "مناسف لحم أو دجاج", desc: "منسف ملكي بالأرز الفاخر والمكسرات (توصية قبل بساعة)", price: "", img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80" },
-          { name: "سمك مشط", desc: "سمك مشط طازج متبل بالثوم والليمون ومشوي بعناية", price: "", img: "https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?auto=format&fit=crop&w=400&q=80" },
-          { name: "سمك أجاج", desc: "سمك بحري مشوي على الفحم أو بالفرن", price: "", img: "https://images.unsplash.com/photo-1534080564583-6be75777b70a?auto=format&fit=crop&w=400&q=80" },
-          { name: "قريدس (جمبري)", desc: "جمبري مشوي مع الزبدة والثوم والأعشاب العطرية", price: "", img: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=400&q=80" },
-          { name: "جوانح مشوية", desc: "أجنحة دجاج مشوية بصوص الباربكيو المدخن", price: "", img: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=400&q=80" }
+          { name: "مناسف لحم أو دجاج", desc: "منسف ملكي بالأرز الفاخر والمكسرات (توصية قبل بساعة)", img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80" },
+          { name: "سمك مشط", desc: "سمك مشط طازج متبل بالثوم والليمون ومشوي بعناية", img: "https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?auto=format&fit=crop&w=400&q=80" },
+          { name: "سمك أجاج", desc: "سمك بحري مشوي على الفحم أو بالفرن", img: "https://images.unsplash.com/photo-1534080564583-6be75777b70a?auto=format&fit=crop&w=400&q=80" },
+          { name: "قريدس (جمبري)", desc: "جمبري مشوي مع الزبدة والثوم والأعشاب العطرية", img: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=400&q=80" },
+          { name: "جوانح مشوية", desc: "أجنحة دجاج مشوية بصوص الباربكيو المدخن", img: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-أطباق-صحية-ومقبلات",
         categoryName: "أطباق صحية ومقبلات",
         items: [
-          { name: "وجبات صحية (أرز + شوربة)", desc: "وجبة خفيفة ومتوازنة للمهتمين بالرشاقة", price: "", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80" },
-          { name: "سلطة فتوش", desc: "خضار طازجة مع خبز محمص ورمان وسماق", price: "", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80" },
-          { name: "كبة مقلية", desc: "أقراص مقرمشة محشوة باللحم البلدي والمكسرات", price: "", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=400&q=80" },
-          { name: "مقرمشات فوديز", desc: "سناك ونقانق ومقرمشات محضرة يومياً", price: "", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=400&q=80" }
+          { name: "وجبات صحية (أرز + شوربة)", desc: "وجبة خفيفة ومتوازنة للمهتمين بالرشاقة", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80" },
+          { name: "سلطة فتوش", desc: "خضار طازجة مع خبز محمص ورمان وسماق", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80" },
+          { name: "كبة مقلية", desc: "أقراص مقرمشة محشوة باللحم البلدي والمكسرات", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=400&q=80" },
+          { name: "مقرمشات فوديز", desc: "سناك ونقانق ومقرمشات محضرة يومياً", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-فطائر-وصاج",
-               categoryName: "فطائر وصاج",
+        categoryName: "فطائر وصاج",
         items: [
-          { name: "منافيش عالصاج", desc: "فطائر ومناقيش صاج ساخنة (زعتر، جبنة، محمرة)", price: "", img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=400&q=80" }
+          { name: "منافيش عالصاج", desc: "فطائر ومناقيش صاج ساخنة (زعتر، جبنة، محمرة)", img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=400&q=80" }
         ]
       }
     ];
@@ -533,7 +515,7 @@
         renderSelect();
         renderView();
       } catch (err) {
-        alert("فشل حفظ التعديلات");
+               alert("فشل حفظ التعديلات");
       }
       showLoading(false);
     }
@@ -574,7 +556,6 @@
                   <img src="${it.img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=100&q=80'}" class="item-thumb">
                   <div>
                     <div style="font-weight:700;">${it.name || 'بدون اسم'}</div>
-                    ${it.price ? `<span class="item-price-tag">${it.price}</span>` : ''}
                     <div style="font-size:0.75rem; color:var(--text-muted);">${it.desc || ''}</div>
                   </div>
                 </div>
@@ -613,7 +594,6 @@
 
       document.getElementById("itemCatSelect").value = cat.id;
       document.getElementById("itemName").value = item.name || "";
-      document.getElementById("itemPrice").value = item.price || "";
       document.getElementById("itemDesc").value = item.desc || "";
 
       if (item.img) {
@@ -636,7 +616,6 @@
     function cancelEditing() {
       editingState = { isEditing: false, catIdx: null, itIdx: null };
       document.getElementById("itemName").value = "";
-      document.getElementById("itemPrice").value = "";
       document.getElementById("itemDesc").value = "";
       document.getElementById("itemImg").value = "";
       clearSelectedImage();
@@ -649,7 +628,6 @@
     async function saveItemAction() {
       const catId = document.getElementById("itemCatSelect").value;
       const name = document.getElementById("itemName").value.trim();
-      const price = document.getElementById("itemPrice").value.trim();
       const desc = document.getElementById("itemDesc").value.trim();
       const directUrl = document.getElementById("itemImg").value.trim();
 
@@ -660,7 +638,7 @@
 
       if (editingState.isEditing) {
         const oldCat = currentMenu[editingState.catIdx];
-        const updatedItem = { name, price, desc, img };
+        const updatedItem = { name, desc, img };
 
         if (oldCat.id === catId) {
           oldCat.items[editingState.itIdx] = updatedItem;
@@ -683,10 +661,9 @@
           cat = currentMenu[0];
         }
         if (!cat.items) cat.items = [];
-        cat.items.push({ name, price, desc, img });
+        cat.items.push({ name, desc, img });
 
         document.getElementById("itemName").value = "";
-        document.getElementById("itemPrice").value = "";
         document.getElementById("itemDesc").value = "";
         document.getElementById("itemImg").value = "";
         clearSelectedImage();
