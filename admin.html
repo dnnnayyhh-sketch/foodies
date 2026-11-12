@@ -243,7 +243,7 @@
       display: none;
       justify-content: center;
       align-items: center;
-      z-index: 100;
+      z-index: 300;
       font-weight: 800;
       color: var(--gold-primary);
     }
@@ -322,11 +322,30 @@
     <div id="menuStructureView"></div>
   </section>
 
-  <script>
-    const CORRECT_PIN = "12345";
-    const DB_URL = "https://foodies-menu-b05de-default-rtdb.firebaseio.com/menu.json";
-    let currentMenu = [];
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjsKc6cvadg6yPOpEoxKxDCez9uDhQDoA",
+      authDomain: "foodies-menu-b05de.firebaseapp.com",
+      databaseURL: "https://foodies-menu-b05de-default-rtdb.firebaseio.com",
+      projectId: "foodies-menu-b05de",
+      storageBucket: "foodies-menu-b05de.firebasestorage.app",
+      messagingSenderId: "399638503719",
+      appId: "1:399638503719:web:ec64af97611f95632dc902"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    const CORRECT_PIN = "12345";
+    const ADMIN_EMAIL = "admin@foodies.com";
+    const ADMIN_PASS = "123456";
+
+    let currentMenu = [];
     let compressedImageBase64 = "";
 
     let editingState = {
@@ -335,18 +354,26 @@
       itIdx: null
     };
 
-    function checkPin() {
+    window.checkPin = async function() {
       const pin = document.getElementById("pinInput").value;
-      if (pin === CORRECT_PIN) {
-        document.getElementById("authOverlay").style.display = "none";
-        loadMenu();
-      } else {
+      if (pin !== CORRECT_PIN) {
         alert("رمز الدخول غير صحيح!");
+        return;
       }
-    }
+
+      showLoading(true);
+      try {
+        await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASS);
+        document.getElementById("authOverlay").style.display = "none";
+        await loadMenu();
+      } catch (err) {
+        alert("خطأ في التحقق من الصلاحيات: " + err.message);
+      }
+      showLoading(false);
+    };
 
     document.getElementById("pinInput").addEventListener("keypress", function(e) {
-      if (e.key === "Enter") checkPin();
+      if (e.key === "Enter") window.checkPin();
     });
 
     function compressImage(file, maxWidth = 480, maxHeight = 480, quality = 0.65) {
@@ -387,7 +414,7 @@
       });
     }
 
-    async function handleFileSelect(e) {
+    window.handleFileSelect = async function(e) {
       const file = e.target.files[0];
       if (!file) return;
 
@@ -402,14 +429,14 @@
         alert("حدث خطأ أثناء معالجة وضغط الصورة");
       }
       showLoading(false);
-    }
+    };
 
-    function clearSelectedImage() {
+    window.clearSelectedImage = function() {
       compressedImageBase64 = "";
       document.getElementById("imageFileInput").value = "";
       document.getElementById("previewBox").style.display = "none";
       document.getElementById("previewImgEl").src = "";
-    }
+    };
 
     const defaultInitialData = [
       {
@@ -478,7 +505,7 @@
           { name: "وجبات صحية (أرز + شوربة)", desc: "وجبة خفيفة ومتوازنة للمهتمين بالرشاقة", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80" },
           { name: "سلطة فتوش", desc: "خضار طازجة مع خبز محمص ورمان وسماق", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80" },
           { name: "كبة مقلية", desc: "أقراص مقرمشة محشوة باللحم البلدي والمكسرات", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=400&q=80" },
-          { name: "مقرمشات فوديز", desc: "سناك ونقانق ومقرمشات محضرة يومياً", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=400&q=80" }
+                    { name: "مقرمشات فوديز", desc: "سناك ونقانق ومقرمشات محضرة يومياً", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
@@ -493,13 +520,13 @@
     async function loadMenu() {
       showLoading(true);
       try {
-        const res = await fetch(DB_URL);
-        const data = await res.json();
+        const snapshot = await get(ref(db, "menu"));
+        const data = snapshot.val();
         currentMenu = Array.isArray(data) ? data : (data ? Object.values(data) : []);
         renderSelect();
         renderView();
       } catch (err) {
-        alert("خطأ في الاتصال بقاعدة البيانات");
+        alert("خطأ في الاتصال بقاعدة البيانات: " + err.message);
       }
       showLoading(false);
     }
@@ -507,25 +534,21 @@
     async function saveMenu() {
       showLoading(true);
       try {
-        await fetch(DB_URL, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(currentMenu)
-        });
+        await set(ref(db, "menu"), currentMenu);
         renderSelect();
         renderView();
       } catch (err) {
-               alert("فشل حفظ التعديلات");
+        alert("فشل حفظ التعديلات: " + err.message);
       }
       showLoading(false);
     }
 
-    async function seedInitialMenu() {
+    window.seedInitialMenu = async function() {
       if (!confirm("هل تريد رفع الأصناف الحالية تلقائياً إلى قاعدة البيانات؟ سيتم استبدال البيانات الحالية.")) return;
       currentMenu = defaultInitialData;
       await saveMenu();
       alert("تم رفع بيانات المنيو بنجاح!");
-    }
+    };
 
     function renderSelect() {
       const select = document.getElementById("itemCatSelect");
@@ -570,23 +593,23 @@
       `).join('');
     }
 
-    async function addCategory() {
+    window.addCategory = async function() {
       const input = document.getElementById("newCatName");
       const name = input.value.trim();
       const id = "sec-" + (name ? name.replace(/\s+/g, '-').toLowerCase() : Date.now());
       currentMenu.push({ id, categoryName: name || "قسم جديد", items: [] });
       input.value = "";
       await saveMenu();
-    }
+    };
 
-    async function deleteCategory(catIdx) {
+    window.deleteCategory = async function(catIdx) {
       if (!confirm(`هل أنت متأكد من حذف قسم "${currentMenu[catIdx].categoryName}" بكل وجباته؟`)) return;
       currentMenu.splice(catIdx, 1);
-      if (editingState.isEditing && editingState.catIdx === catIdx) cancelEditing();
+      if (editingState.isEditing && editingState.catIdx === catIdx) window.cancelEditing();
       await saveMenu();
-    }
+    };
 
-    function startEditItem(catIdx, itIdx) {
+    window.startEditItem = function(catIdx, itIdx) {
       const cat = currentMenu[catIdx];
       const item = cat.items[itIdx];
 
@@ -603,7 +626,7 @@
         document.getElementById("previewStatus").innerText = "الصورة الحالية للوجبة";
         document.getElementById("itemImg").value = item.img.startsWith("data:") ? "" : item.img;
       } else {
-        clearSelectedImage();
+        window.clearSelectedImage();
       }
 
       document.getElementById("itemFormTitle").innerText = "تعديل الوجبة";
@@ -611,21 +634,21 @@
       document.getElementById("cancelEditBtn").style.display = "block";
 
       document.getElementById("itemFormCard").scrollIntoView({ behavior: 'smooth' });
-    }
+    };
 
-    function cancelEditing() {
+    window.cancelEditing = function() {
       editingState = { isEditing: false, catIdx: null, itIdx: null };
       document.getElementById("itemName").value = "";
       document.getElementById("itemDesc").value = "";
       document.getElementById("itemImg").value = "";
-      clearSelectedImage();
+      window.clearSelectedImage();
 
       document.getElementById("itemFormTitle").innerText = "إضافة وجبة ضمن قسم";
       document.getElementById("saveItemBtn").innerText = "+ حفظ الوجبة في المنيو";
       document.getElementById("cancelEditBtn").style.display = "none";
-    }
+    };
 
-    async function saveItemAction() {
+    window.saveItemAction = async function() {
       const catId = document.getElementById("itemCatSelect").value;
       const name = document.getElementById("itemName").value.trim();
       const desc = document.getElementById("itemDesc").value.trim();
@@ -651,7 +674,7 @@
           if (!targetCat.items) targetCat.items = [];
           targetCat.items.push(updatedItem);
         }
-        cancelEditing();
+        window.cancelEditing();
       } else {
         let cat = currentMenu.find(c => c.id === catId);
         if (!cat) {
@@ -666,21 +689,21 @@
         document.getElementById("itemName").value = "";
         document.getElementById("itemDesc").value = "";
         document.getElementById("itemImg").value = "";
-        clearSelectedImage();
+        window.clearSelectedImage();
       }
 
       await saveMenu();
       alert("تم الحفظ بنجاح!");
-    }
+    };
 
-    async function deleteItem(catIdx, itIdx) {
+    window.deleteItem = async function(catIdx, itIdx) {
       if (!confirm("هل تريد حذف هذه الوجبة؟")) return;
       currentMenu[catIdx].items.splice(itIdx, 1);
       if (editingState.isEditing && editingState.catIdx === catIdx && editingState.itIdx === itIdx) {
-        cancelEditing();
+        window.cancelEditing();
       }
       await saveMenu();
-    }
+    };
 
     function showLoading(show) {
       document.getElementById("loadingOverlay").style.display = show ? "flex" : "none";
