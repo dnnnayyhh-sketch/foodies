@@ -29,6 +29,7 @@
       --border-gold: rgba(229, 169, 60, 0.25);
       --radius-xl: 18px;
       --radius-md: 12px;
+      --green-live: #22c55e;
     }
 
     * {
@@ -100,6 +101,112 @@
       display: flex;
       align-items: center;
       gap: 5px;
+    }
+
+    /* بطاقة تتبع الطلب الحي الخاصة بالزبون */
+    .live-order-tracker {
+      display: none;
+      margin: 14px 16px 4px;
+      background: linear-gradient(145deg, #1d222b 0%, #14181f 100%);
+      border: 1px solid var(--gold-primary);
+      border-radius: var(--radius-xl);
+      padding: 14px 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 14px rgba(229, 169, 60, 0.15);
+      animation: slideDown 0.35s ease;
+    }
+
+    .live-order-tracker.active {
+      display: block;
+    }
+
+    .tracker-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .tracker-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34, 197, 94, 0.14);
+      color: var(--green-live);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green-live);
+      animation: pulseAnim 1.3s infinite;
+    }
+
+    .tracker-order-num {
+      background: var(--gold-gradient);
+      color: #101216;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+    .tracker-timer-panel {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .tracker-timer-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .tracker-countdown {
+      font-size: 1.95rem;
+      font-weight: 900;
+      color: var(--gold-primary);
+      direction: ltr;
+      letter-spacing: 2px;
+      line-height: 1.2;
+      margin-top: 2px;
+    }
+
+    .tracker-summary {
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .btn-dismiss-tracker {
+      margin-top: 10px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 7px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(1.3); }
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .search-wrapper {
@@ -245,6 +352,19 @@
       transition: transform 0.4s ease;
     }
 
+    .prep-badge-card {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      background: rgba(16, 18, 22, 0.85);
+      color: var(--gold-primary);
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 8px;
+      border: 1px solid var(--border-gold);
+    }
+
     .food-info {
       padding: 8px 2px 2px;
       flex: 1;
@@ -353,6 +473,12 @@
       color: #fff;
     }
 
+    .cart-row-sub {
+      font-size: 0.72rem;
+      color: var(--gold-primary);
+      font-weight: 700;
+    }
+
     .cart-ctrls {
       display: flex;
       align-items: center;
@@ -371,6 +497,19 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+    }
+
+    .est-prep-banner {
+      background: rgba(229, 169, 60, 0.12);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-primary);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      text-align: center;
+      display: none;
     }
 
     .form-ctrl {
@@ -402,6 +541,11 @@
       gap: 8px;
       cursor: pointer;
       box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+    }
+
+    .btn-submit-wa:disabled {
+      opacity: 0.6;
+      cursor: wait;
     }
 
     .direct-call-card {
@@ -454,7 +598,6 @@
       box-shadow: 0 2px 8px var(--gold-glow);
     }
 
-    /* زر اختصار التثبيت اليدوي الأنيق في قسم المعلومات أو كبطاقة مميزة */
     .install-shortcut-box {
       background: linear-gradient(135deg, rgba(229,169,60,0.15) 0%, rgba(31,35,44,0.95) 100%);
       border: 1px solid var(--gold-primary);
@@ -479,15 +622,16 @@
     }
 
     .bar-btn {
-      background: none;
+      background: transparent;
       border: none;
       color: var(--text-muted);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-      cursor: pointer;
+      justify-content: center;
+      gap: 2px;
       position: relative;
+      cursor: pointer;
     }
 
     .bar-btn.active { color: var(--gold-primary); }
@@ -530,6 +674,20 @@
     </a>
   </header>
 
+  <!-- بطاقة العداد التنازلي الخاص بالزبون الذي طلب فقط -->
+  <div id="liveOrderTracker" class="live-order-tracker">
+    <div class="tracker-top-row">
+      <span class="tracker-status-pill"><span class="pulse-dot"></span> طلبك قيد التحضير</span>
+      <span id="trackerOrderBadge" class="tracker-order-num">طلب رقم #1</span>
+    </div>
+    <div class="tracker-timer-panel">
+      <div id="trackerTimerHint" class="tracker-timer-hint">الوقت المتبقي لتجهيز ووصول طلبك</div>
+      <div id="trackerCountdown" class="tracker-countdown">00:00</div>
+    </div>
+    <div id="trackerOrderSummary" class="tracker-summary"></div>
+    <button class="btn-dismiss-tracker" onclick="dismissActiveOrder()">إغلاق شاشة المتابعة</button>
+  </div>
+
   <main id="view-menu" class="tab-view active">
     <div class="search-wrapper">
       <div class="search-input-box">
@@ -559,10 +717,11 @@
     </div>
 
     <div class="panel-box">
+      <div id="estPrepBanner" class="est-prep-banner"></div>
       <input type="text" id="custName" class="form-ctrl" placeholder="الاسم الكريم + العنوان بالتفصيل أو رقم الطاولة">
       <textarea id="custNotes" class="form-ctrl" rows="2" placeholder="أي ملاحظات على الطلب (بدون مايونيز، صوص زيادة...)"></textarea>
 
-      <button class="btn-submit-wa" onclick="submitToWhatsApp()">
+      <button id="submitWaBtn" class="btn-submit-wa" onclick="submitToWhatsApp()">
         <span>💬</span> تأكيد وإرسال الطلب عبر واتساب
       </button>
     </div>
@@ -574,7 +733,6 @@
       <h2 style="color:var(--gold-primary); font-size:1.3rem; font-weight:900;">مطعم foodies.a</h2>
       <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:18px;">المذاق الفاخر للبرغر والمأكولات الغربية الطازجة</p>
 
-      <!-- بطاقة إرشادية واضحة لإضافة التطبيق للشاشة الرئيسية -->
       <div class="install-shortcut-box">
         <div style="font-size:0.9rem; font-weight:900; color:var(--gold-primary); margin-bottom:4px;">📱 اجعل التطبيق على شاشتك الرئيسية</div>
         <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
@@ -587,7 +745,7 @@
         <a href="tel:0998187778" class="direct-call-card">
           <div class="phone-info-box">
             <span class="phone-lbl">الخط الرئيسي & واتساب</span>
-            <span class="phone-num">0998 187 778</span>
+                        <span class="phone-num">0998 187 778</span>
           </div>
           <div class="btn-call-action">
             <span>📞</span> اتصال
@@ -610,7 +768,7 @@
         </div>
         <div style="display:flex; justify-content:space-between;">
           <span style="color:var(--text-muted);">سرعة التجهيز:</span>
-          <span style="font-weight:800;">15 - 25 دقيقة</span>
+          <span style="font-weight:800;">حسب كل وجبة</span>
         </div>
       </div>
     </div>
@@ -633,90 +791,30 @@
   </nav>
 
   <script>
-    const FIREBASE_DB_URL = "https://foodies-menu-b05de-default-rtdb.firebaseio.com/menu.json";
-    
+    const FIREBASE_BASE = "https://foodies-menu-b05de-default-rtdb.firebaseio.com";
+    const FIREBASE_DB_URL = `${FIREBASE_BASE}/menu.json`;
+    const FIREBASE_COUNTER_URL = `${FIREBASE_BASE}/orderCounter.json`;
+
     const fallbackMenu = [
       {
         id: "sec-فروج-ومشوي",
         categoryName: "الفروج والمشوي",
         items: [
-          { name: "فروج شواية", desc: "فروج مشوي على الشواية متبل بالبهارات الخاصة ومقمر يقدم مع الثوم والبطاطا والخبز المشروح", img: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=400&q=80" }
-        ]
-      },
-      {
-        id: "sec-برغر",
-        categoryName: "البرغر",
-        items: [
-          { name: "همبرغر", desc: "لحم بقري بلدي مشوي مع الخس والطماطم والمخلل والصوص الخاص", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80" },
-          { name: "سماش برغر", desc: "لحم مقرمش الأطراف مع طبقات جبنة التشيدر السائلة والخبز المحمص", img: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر جوسي", desc: "لحم محشو بخلطة أجبان تذوب مع القرمشة الأولى", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر بريسكت", desc: "لحم بريسكت مدخن ببطء مع صوص الباربكيو الفاخر", img: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=400&q=80" },
-          { name: "تشيكن برغر", desc: "صدر دجاج كرسبي ذهبي مع صوص الكولسلو المميز", img: "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر آنجوس", desc: "لحم بلاك آنجوس معتق وفاخر لأصحاب الذوق العالي", img: "https://images.unsplash.com/photo-1583032015879-c5c24e037f40?auto=format&fit=crop&w=400&q=80" },
-          { name: "ستك برغر", desc: "قطع ستيك لحم متبل بخلطة خاصة مع الفطر والبصل المكرمل", img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=400&q=80" }
-        ]
-      },
-      {
-        id: "sec-ساندويش-غربي",
-        categoryName: "ساندويش وغربي",
-        items: [
-          { name: "وجبة كنتاكي دبابيس", desc: "دبابيس مقرمشة تقدم مع البطاطا والثومية", img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=400&q=80" },
-                    { name: "كريسبي", desc: "فيليه دجاج مقرمش مع صوص الخردل بالعسل", img: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=400&q=80" },
-          { name: "ناجتس", desc: "قطع دجاج مقلية ذهبية خفيفة ومحببة", img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80" },
-          { name: "أسكالوب", desc: "شرائح دجاج بانيه مقلي بتتبيلة أعشاب راقية", img: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=400&q=80" },
-          { name: "زنجر", desc: "صدر دجاج حار ومقرمش مع خس ومايونيز مدخن", img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=400&q=80" },
-          { name: "بانيني إيطالي", desc: "ساندويش إيطالي محمص بالجبنة الذائبة", img: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80" },
-          { name: "فرانسيسكو", desc: "دجاج متبل مع جبنة الموزاريلا والذرة وصوص الصويا", img: "https://images.unsplash.com/photo-1619860860774-1e2e17343432?auto=format&fit=crop&w=400&q=80" },
-          { name: "فاهيتا", desc: "شرائح دجاج مع فلفل ملون وبصل وتتبيلة مكسيكية", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
-          { name: "مكسيكي", desc: "خلطة لحم أو دجاج حار ببهارات مكسيكية لا تقاوم", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=400&q=80" },
-          { name: "شيش طاووق", desc: "مكعبات دجاج مشوية بتتبيلة الليمون واللبن والثوم", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80" },
-          { name: "شقف", desc: "لحم غنم طري مشوي على الفحم مع البقدونس", img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80" },
-          { name: "شاورما", desc: "شاورما بتتبيلة أصيلة مع الثومية ومخلل الخيار المقرمش", img: "https://images.unsplash.com/photo-1633337474565-12c5b3644265?auto=format&fit=crop&w=400&q=80" }
-        ]
-      },
-      {
-        id: "sec-وجبات-وستيك",
-        categoryName: "وجبات وستيك",
-        items: [
-          { name: "ستك دجاج", desc: "صدر دجاج مشوي متكامل مع صوص المشروم اللذيذ", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=400&q=80" },
-          { name: "ستك لحم", desc: "قطعة تندرلوين طرية مشوية مع خضار سوتيه", img: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=400&q=80" },
-          { name: "سودة (كبدة)", desc: "سودة طازجة مطهوة بدبس الرمان والبهارات", img: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=400&q=80" },
-          { name: "بطاطا وكاسة بطاطا", desc: "أصابع بطاطا مقرمشة ساخنة ببهارات فووديز", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=400&q=80" }
-        ]
-      },
-      {
-        id: "sec-مشاوي-ومناسف",
-        categoryName: "مشاوي ومناسف",
-        items: [
-          { name: "مناسف لحم أو دجاج", desc: "منسف ملكي بالأرز الفاخر والمكسرات (توصية قبل بساعة)", img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80" },
-          { name: "سمك مشط", desc: "سمك مشط طازج متبل بالثوم والليمون ومشوي بعناية", img: "https://images.unsplash.com/photo-1534939561126-855b8675edd7?auto=format&fit=crop&w=400&q=80" },
-          { name: "سمك أجاج", desc: "سمك بحري مشوي على الفحم أو بالفرن", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=400&q=80" },
-          { name: "قريدس (جمبري)", desc: "جمبري مشوي مع الزبدة والثوم والأعشاب العطرية", img: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=400&q=80" },
-          { name: "جوانح مشوية", desc: "أجنحة دجاج مشوية بصوص الباربكيو المدخن", img: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=400&q=80" }
-        ]
-      },
-      {
-        id: "sec-أطباق-صحية-ومقبلات",
-        categoryName: "أطباق صحية ومقبلات",
-        items: [
-          { name: "وجبات صحية (أرز + شوربة)", desc: "وجبة خفيفة ومتوازنة للمهتمين بالرشاقة", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80" },
-          { name: "سلطة فتوش", desc: "خضار طازجة مع خبز محمص ورمان وسماق", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80" },
-          { name: "كبة مقلية", desc: "أقراص مقرمشة محشوة باللحم البلدي والمكسرات", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=400&q=80" },
-          { name: "مقرمشات فوديز", desc: "سناك ونقانق ومقرمشات محضرة يومياً", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=400&q=80" }
-        ]
-      },
-      {
-        id: "sec-فطائر-وصاج",
-        categoryName: "فطائر وصاج",
-        items: [
-          { name: "منافيش عالصاج", desc: "فطائر ومناقيش صاج ساخنة (زعتر، جبنة، محمرة)", img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=400&q=80" }
+          { name: "فروج شواية", prepTime: 30, desc: "فروج مشوي على الشواية متبل بالبهارات الخاصة ومقمر يقدم مع الثوم والبطاطا والخبز المشروح", img: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=400&q=80" }
         ]
       }
     ];
 
     let menuStructure = [];
+    let itemPrepMap = {};
     let cart = {};
     let currentOrderType = "توصيل طلب";
+    let trackerInterval = null;
+
+    function getItemPrepMinutes(item) {
+      const val = Number(item?.prepTime);
+      return (val && val > 0) ? val : 20;
+    }
 
     async function fetchLiveMenu() {
       try {
@@ -730,6 +828,16 @@
       } catch (err) {
         menuStructure = fallbackMenu;
       }
+
+      itemPrepMap = {};
+      menuStructure.forEach(sec => {
+        (sec.items || []).forEach(it => {
+          if (it.name) {
+            itemPrepMap[it.name] = getItemPrepMinutes(it);
+          }
+        });
+      });
+
       buildCategoriesNav();
       renderHorizontalMenu();
     }
@@ -764,22 +872,26 @@
                 <span class="section-count">${filteredItems.length} صنف</span>
               </div>
               <div class="cards-slider">
-                ${filteredItems.map(item => `
-                  <div class="food-card-v">
-                    <div class="img-box">
-                      <img src="${item.img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80'}" alt="${item.name}" loading="lazy">
-                    </div>
-                    <div class="food-info">
-                      <div>
-                        <div class="item-title">${item.name}</div>
-                        <div class="item-desc">${item.desc || ''}</div>
+                ${filteredItems.map(item => {
+                  const prepMins = getItemPrepMinutes(item);
+                  return `
+                    <div class="food-card-v">
+                      <div class="img-box">
+                        <img src="${item.img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80'}" alt="${item.name}" loading="lazy">
+                        <span class="prep-badge-card">⏱ ${prepMins} د</span>
                       </div>
-                      <div class="card-footer">
-                        <button class="btn-add-circle" title="إضافة" onclick="addItem('${item.name}')">+</button>
+                      <div class="food-info">
+                        <div>
+                          <div class="item-title">${item.name}</div>
+                          <div class="item-desc">${item.desc || ''}</div>
+                        </div>
+                        <div class="card-footer">
+                          <button class="btn-add-circle" title="إضافة" onclick="addItem('${item.name.replace(/'/g, "\\'")}')">+</button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                `).join('')}
+                  `;
+                }).join('')}
               </div>
             </section>
           `;
@@ -827,6 +939,15 @@
       updateCartDisplay();
     }
 
+    function getCartPrepMinutes() {
+      let maxPrep = 0;
+      Object.keys(cart).forEach(name => {
+        const mins = itemPrepMap[name] || 20;
+        if (mins > maxPrep) maxPrep = mins;
+      });
+      return maxPrep;
+    }
+
     function updateCartDisplay() {
       const badge = document.getElementById('cartCountBadge');
       const totalCount = Object.values(cart).reduce((a, b) => a + b, 0);
@@ -839,20 +960,29 @@
       }
 
       const list = document.getElementById('cartItemsList');
+      const estBanner = document.getElementById('estPrepBanner');
       const keys = Object.keys(cart);
 
       if (keys.length === 0) {
         list.innerHTML = `<p style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.85rem;">السلة فارغة حالياً.. اسحب وتصفح المنيو لاختيار وجباتك!</p>`;
+        estBanner.style.display = 'none';
         return;
       }
 
+      const totalPrep = getCartPrepMinutes();
+      estBanner.style.display = 'block';
+      estBanner.innerHTML = `⏱ الوقت المتوقع لتجهيز طلبك: <strong>${totalPrep} دقيقة</strong>`;
+
       list.innerHTML = keys.map(k => `
         <div class="cart-row">
-          <div class="cart-row-title">${k}</div>
+          <div>
+            <div class="cart-row-title">${k}</div>
+            <div class="cart-row-sub">مدة التجهيز: ${itemPrepMap[k] || 20} دقيقة</div>
+          </div>
           <div class="cart-ctrls">
-            <button class="btn-ctrl" onclick="changeQty('${k}', -1)">-</button>
+            <button class="btn-ctrl" onclick="changeQty('${k.replace(/'/g, "\\'")}', -1)">-</button>
             <span style="font-weight:900; font-size:1rem; min-width:22px; text-align:center;">${cart[k]}</span>
-            <button class="btn-ctrl" onclick="changeQty('${k}', 1)">+</button>
+            <button class="btn-ctrl" onclick="changeQty('${k.replace(/'/g, "\\'")}', 1)">+</button>
           </div>
         </div>
       `).join('');
@@ -873,7 +1003,26 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function submitToWhatsApp() {
+    async function getSequentialOrderNumber() {
+      try {
+        const res = await fetch(FIREBASE_COUNTER_URL);
+        const currentVal = await res.json();
+        const nextVal = (typeof currentVal === "number" && currentVal >= 0 ? currentVal : 0) + 1;
+
+        await fetch(FIREBASE_COUNTER_URL, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(nextVal)
+        });
+        return nextVal;
+      } catch (e) {
+        const fallbackLocal = (parseInt(localStorage.getItem("foodies_seq_fallback") || "0", 10)) + 1;
+        localStorage.setItem("foodies_seq_fallback", String(fallbackLocal));
+        return fallbackLocal;
+      }
+    }
+
+    async function submitToWhatsApp() {
       const items = Object.keys(cart);
       if (items.length === 0) {
         alert("يرجى اختيار وجبة واحدة على الأقل قبل إرسال الطلب!");
@@ -889,7 +1038,26 @@
         return;
       }
 
-      let text = `*طلب جديد من منيو foodies.a الفاخر* 🍔✨\n\n`;
+      const btn = document.getElementById('submitWaBtn');
+      btn.disabled = true;
+      btn.innerHTML = `⏳ جاري تسجيل رقم الطلب...`;
+
+      const orderNum = await getSequentialOrderNumber();
+      const prepMinutes = getCartPrepMinutes();
+      const endTime = Date.now() + prepMinutes * 60 * 1000;
+
+      const itemsSummary = items.map(it => `${it} (×${cart[it]})`);
+
+      const activeOrderData = {
+        orderNum,
+        itemsSummary,
+        prepMinutes,
+        endTime
+      };
+      localStorage.setItem("foodies_customer_tracker", JSON.stringify(activeOrderData));
+      activateCustomerTracker(activeOrderData);
+
+      let text = `*طلب جديد رقم (#${orderNum}) - منيو foodies.a* 🍔✨\n\n`;
       text += `🛵 *نوع الطلب:* ${currentOrderType}\n`;
       text += `👤 *العميل / العنوان:* ${name}\n`;
       if (notes) text += `📝 *ملاحظات:* ${notes}\n`;
@@ -899,14 +1067,66 @@
         text += `${idx + 1}. ${it} (العدد: ${cart[it]})\n`;
       });
 
+      text += `\n⏱ *مدة التجهيز المتوقعة:* ${prepMinutes} دقيقة`;
       text += `\nيرجى تأكيد الطلب والبدء بالتحضير. شكراً لكم!`;
 
       const phone = "963998187778";
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+
+      btn.disabled = false;
+      btn.innerHTML = `<span>💬</span> تأكيد وإرسال الطلب عبر واتساب`;
+    }
+
+    function activateCustomerTracker(data) {
+      const box = document.getElementById('liveOrderTracker');
+      const badge = document.getElementById('trackerOrderBadge');
+      const countdown = document.getElementById('trackerCountdown');
+      const hint = document.getElementById('trackerTimerHint');
+      const summary = document.getElementById('trackerOrderSummary');
+
+      badge.textContent = `طلب رقم #${data.orderNum}`;
+      summary.innerHTML = `<strong>الوجبات:</strong> ${data.itemsSummary.join(" + ")} • <strong>المدة:</strong> ${data.prepMinutes} دقيقة`;
+      box.classList.add('active');
+
+      if (trackerInterval) clearInterval(trackerInterval);
+
+      function updateTick() {
+        const diff = data.endTime - Date.now();
+        if (diff <= 0) {
+          clearInterval(trackerInterval);
+          countdown.textContent = "00:00";
+          countdown.style.color = "#22c55e";
+          hint.textContent = "✅ طلبك جاهز الآن أو على وشك الوصول!";
+          return;
+        }
+        const totalSec = Math.floor(diff / 1000);
+        const mins = String(Math.floor(totalSec / 60)).padStart(2, "0");
+        const secs = String(totalSec % 60).padStart(2, "0");
+        countdown.style.color = "#e5a93c";
+        hint.textContent = "الوقت المتبقي لتجهيز ووصول طلبك";
+        countdown.textContent = `${mins}:${secs}`;
+      }
+
+      updateTick();
+      trackerInterval = setInterval(updateTick, 1000);
+    }
+
+    function dismissActiveOrder() {
+      localStorage.removeItem("foodies_customer_tracker");
+      if (trackerInterval) clearInterval(trackerInterval);
+      document.getElementById('liveOrderTracker').classList.remove('active');
     }
 
     window.onload = () => {
       fetchLiveMenu();
+      const savedTracker = localStorage.getItem("foodies_customer_tracker");
+      if (savedTracker) {
+        try {
+          activateCustomerTracker(JSON.parse(savedTracker));
+        } catch (e) {
+          localStorage.removeItem("foodies_customer_tracker");
+        }
+      }
     };
   </script>
 </body>
