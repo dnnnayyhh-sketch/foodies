@@ -79,6 +79,34 @@
       display: inline-block;
     }
 
+    .counter-control-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-card);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .counter-num-display {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--gold-primary);
+    }
+
+    .btn-reset-counter {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: var(--danger);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; }
 
@@ -214,6 +242,16 @@
       object-fit: cover;
       background: #111;
     }
+    .prep-pill-admin {
+      display: inline-block;
+      background: rgba(229, 169, 60, 0.15);
+      color: var(--gold-primary);
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 1px 7px;
+      border-radius: 6px;
+      margin-right: 6px;
+    }
     .item-actions {
       display: flex;
       align-items: center;
@@ -264,8 +302,20 @@
 
   <header>
     <h1>لوحة إدارة المنيو | foodies.a</h1>
-    <p>إدارة الأقسام والوجبات وتحديث المنيو لحظياً</p>
+    <p>إدارة الأقسام والوجبات وأوقات التحضير لحظياً</p>
   </header>
+
+  <!-- إدارة عداد الطلبات التسلسلي -->
+  <section class="card">
+    <h2>عداد الطلبات اليومي (1، 2، 3...)</h2>
+    <div class="counter-control-row">
+      <div>
+        <div style="font-size:0.78rem; color:var(--text-muted);">رقم آخر طلب مسجل:</div>
+        <div class="counter-num-display" id="currentCounterDisplay">0</div>
+      </div>
+      <button class="btn-reset-counter" onclick="resetOrderCounter()">🔄 تصفير العداد (يبدأ من 1)</button>
+    </div>
+  </section>
 
   <section class="card">
     <h2>إضافة قسم جديد</h2>
@@ -284,8 +334,13 @@
     </div>
 
     <div class="form-group">
-      <label>اسم الوجبة (اختياري)</label>
+      <label>اسم الوجبة</label>
       <input type="text" id="itemName" placeholder="اسم الوجبة">
+    </div>
+
+    <div class="form-group">
+      <label>⏱ مدة تجهيز وتوصيل الوجبة (بالدقائق)</label>
+      <input type="number" id="itemPrepTime" min="1" max="300" value="20" placeholder="مثلاً: 20 أو 30 أو 60">
     </div>
 
     <div class="form-group">
@@ -366,6 +421,7 @@
         await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASS);
         document.getElementById("authOverlay").style.display = "none";
         await loadMenu();
+        await loadOrderCounter();
       } catch (err) {
         alert("خطأ في التحقق من الصلاحيات: " + err.message);
       }
@@ -375,6 +431,29 @@
     document.getElementById("pinInput").addEventListener("keypress", function(e) {
       if (e.key === "Enter") window.checkPin();
     });
+
+    async function loadOrderCounter() {
+      try {
+        const snap = await get(ref(db, "orderCounter"));
+        const val = snap.val();
+        document.getElementById("currentCounterDisplay").innerText = (typeof val === "number" ? val : 0);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    window.resetOrderCounter = async function() {
+      if (!confirm("هل تريد تصفير عداد الطلبات ليبدأ الزبون القادم من رقم 1؟")) return;
+      showLoading(true);
+      try {
+        await set(ref(db, "orderCounter"), 0);
+        document.getElementById("currentCounterDisplay").innerText = "0";
+        alert("تم تصفير العداد بنجاح! الطلب القادم سيأخذ رقم #1.");
+      } catch (err) {
+        alert("تعذر تصفير العداد: " + err.message);
+      }
+      showLoading(false);
+    };
 
     function compressImage(file, maxWidth = 480, maxHeight = 480, quality = 0.65) {
       return new Promise((resolve, reject) => {
@@ -443,76 +522,76 @@
         id: "sec-فروج-ومشوي",
         categoryName: "الفروج والمشوي",
         items: [
-          { name: "فروج شواية", desc: "فروج مشوي على الشواية متبل بالبهارات الخاصة ومقمر يقدم مع الثوم والبطاطا والخبز المشروح", img: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=400&q=80" }
+          { name: "فروج شواية", prepTime: 30, desc: "فروج مشوي على الشواية متبل بالبهارات الخاصة ومقمر يقدم مع الثوم والبطاطا والخبز المشروح", img: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-برغر",
         categoryName: "البرغر",
         items: [
-          { name: "همبرغر", desc: "لحم بقري بلدي مشوي مع الخس والطماطم والمخلل والصوص الخاص", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80" },
-          { name: "سماش برغر", desc: "لحم مقرمش الأطراف مع طبقات جبنة التشيدر السائلة والخبز المحمص", img: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر جوسي", desc: "لحم محشو بخلطة أجبان تذوب مع القرمشة الأولى", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر بريسكت", desc: "لحم بريسكت مدخن ببطء مع صوص الباربكيو الفاخر", img: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=400&q=80" },
-          { name: "تشيكن برغر", desc: "صدر دجاج كرسبي ذهبي مع صوص الكولسلو المميز", img: "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=400&q=80" },
-          { name: "برغر آنجوس", desc: "لحم بلاك آنجوس معتق وفاخر لأصحاب الذوق العالي", img: "https://images.unsplash.com/photo-1583032015879-c5c24e037f40?auto=format&fit=crop&w=400&q=80" },
-          { name: "ستك برغر", desc: "قطع ستيك لحم متبل بخلطة خاصة مع الفطر والبصل المكرمل", img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=400&q=80" }
+          { name: "همبرغر", prepTime: 20, desc: "لحم بقري بلدي مشوي مع الخس والطماطم والمخلل والصوص الخاص", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80" },
+          { name: "سماش برغر", prepTime: 20, desc: "لحم مقرمش الأطراف مع طبقات جبنة التشيدر السائلة والخبز المحمص", img: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=400&q=80" },
+          { name: "برغر جوسي", prepTime: 20, desc: "لحم محشو بخلطة أجبان تذوب مع القرمشة الأولى", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80" },
+          { name: "برغر بريسكت", prepTime: 20, desc: "لحم بريسكت مدخن ببطء مع صوص الباربكيو الفاخر", img: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=400&q=80" },
+          { name: "تشيكن برغر", prepTime: 20, desc: "صدر دجاج كرسبي ذهبي مع صوص الكولسلو المميز", img: "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=400&q=80" },
+          { name: "برغر آنجوس", prepTime: 20, desc: "لحم بلاك آنجوس معتق وفاخر لأصحاب الذوق العالي", img: "https://images.unsplash.com/photo-1583032015879-c5c24e037f40?auto=format&fit=crop&w=400&q=80" },
+          { name: "ستك برغر", prepTime: 25, desc: "قطع ستيك لحم متبل بخلطة خاصة مع الفطر والبصل المكرمل", img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-ساندويش-غربي",
         categoryName: "ساندويش وغربي",
         items: [
-          { name: "وجبة كنتاكي دبابيس", desc: "دبابيس مقرمشة تقدم مع البطاطا والثومية", img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=400&q=80" },
-          { name: "كريسبي", desc: "فيليه دجاج مقرمش مع صوص الخردل بالعسل", img: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=400&q=80" },
-          { name: "ناجتس", desc: "قطع دجاج مقلية ذهبية خفيفة ومحببة", img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80" },
-          { name: "أسكالوب", desc: "شرائح دجاج بانيه مقلي بتتبيلة أعشاب راقية", img: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=400&q=80" },
-          { name: "زنجر", desc: "صدر دجاج حار ومقرمش مع خس ومايونيز مدخن", img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=400&q=80" },
-          { name: "بانيني إيطالي", desc: "ساندويش إيطالي محمص بالجبنة الذائبة", img: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80" },
-          { name: "فرانسيسكو", desc: "دجاج متبل مع جبنة الموزاريلا والذرة وصوص الصويا", img: "https://images.unsplash.com/photo-1619860860774-1e2e17343432?auto=format&fit=crop&w=400&q=80" },
-          { name: "فاهيتا", desc: "شرائح دجاج مع فلفل ملون وبصل وتتبيلة مكسيكية", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
-          { name: "مكسيكي", desc: "خلطة لحم أو دجاج حار ببهارات مكسيكية لا تقاوم", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=400&q=80" },
-          { name: "شيش طاووق", desc: "مكعبات دجاج مشوية بتتبيلة الليمون واللبن والثوم", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80" },
-          { name: "شقف", desc: "لحم غنم طري مشوي على الفحم مع البقدونس", img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80" },
-          { name: "شاورما", desc: "شاورما بتتبيلة أصيلة مع الثومية ومخلل الخيار المقرمش", img: "https://images.unsplash.com/photo-1633337474565-12c5b3644265?auto=format&fit=crop&w=400&q=80" }
+          { name: "وجبة كنتاكي دبابيس", prepTime: 25, desc: "دبابيس مقرمشة تقدم مع البطاطا والثومية", img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=400&q=80" },
+          { name: "كريسبي", prepTime: 20, desc: "فيليه دجاج مقرمش مع صوص الخردل بالعسل", img: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=400&q=80" },
+          { name: "ناجتس", prepTime: 15, desc: "قطع دجاج مقلية ذهبية خفيفة ومحببة", img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80" },
+          { name: "أسكالوب", prepTime: 20, desc: "شرائح دجاج بانيه مقلي بتتبيلة أعشاب راقية", img: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=400&q=80" },
+          { name: "زنجر", prepTime: 20, desc: "صدر دجاج حار ومقرمش مع خس ومايونيز مدخن", img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=400&q=80" },
+          { name: "بانيني إيطالي", prepTime: 15, desc: "ساندويش إيطالي محمص بالجبنة الذائبة", img: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80" },
+          { name: "فرانسيسكو", prepTime: 20, desc: "دجاج متبل مع جبنة الموزاريلا والذرة وصوص الصويا", img: "https://images.unsplash.com/photo-1619860860774-1e2e17343432?auto=format&fit=crop&w=400&q=80" },
+          { name: "فاهيتا", prepTime: 20, desc: "شرائح دجاج مع فلفل ملون وبصل وتتبيلة مكسيكية", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
+          { name: "مكسيكي", prepTime: 20, desc: "خلطة لحم أو دجاج حار ببهارات مكسيكية لا تقاوم", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=400&q=80" },
+          { name: "شيش طاووق", prepTime: 25, desc: "مكعبات دجاج مشوية بتتبيلة الليمون واللبن والثوم", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80" },
+          { name: "شقف", prepTime: 30, desc: "لحم غنم طري مشوي على الفحم مع البقدونس", img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80" },
+                    { name: "شاورما", prepTime: 15, desc: "شاورما بتتبيلة أصيلة مع الثومية ومخلل الخيار المقرمش", img: "https://images.unsplash.com/photo-1633337474565-12c5b3644265?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-وجبات-وستيك",
         categoryName: "وجبات وستيك",
         items: [
-          { name: "ستك دجاج", desc: "صدر دجاج مشوي متكامل مع صوص المشروم اللذيذ", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=400&q=80" },
-          { name: "ستك لحم", desc: "قطعة تندرلوين طرية مشوية مع خضار سوتيه", img: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=400&q=80" },
-          { name: "سودة (كبدة)", desc: "سودة طازجة مطهوة بدبس الرمان والبهارات", img: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=400&q=80" },
-          { name: "بطاطا وكاسة بطاطا", desc: "أصابع بطاطا مقرمشة ساخنة ببهارات فووديز", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=400&q=80" }
+          { name: "ستك دجاج", prepTime: 25, desc: "صدر دجاج مشوي متكامل مع صوص المشروم اللذيذ", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=400&q=80" },
+          { name: "ستك لحم", prepTime: 30, desc: "قطعة تندرلوين طرية مشوية مع خضار سوتيه", img: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=400&q=80" },
+          { name: "سودة (كبدة)", prepTime: 20, desc: "سودة طازجة مطهوة بدبس الرمان والبهارات", img: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=400&q=80" },
+          { name: "بطاطا وكاسة بطاطا", prepTime: 15, desc: "أصابع بطاطا مقرمشة ساخنة ببهارات فووديز", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-مشاوي-ومناسف",
         categoryName: "مشاوي ومناسف",
         items: [
-          { name: "مناسف لحم أو دجاج", desc: "منسف ملكي بالأرز الفاخر والمكسرات (توصية قبل بساعة)", img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80" },
-          { name: "سمك مشط", desc: "سمك مشط طازج متبل بالثوم والليمون ومشوي بعناية", img: "https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?auto=format&fit=crop&w=400&q=80" },
-          { name: "سمك أجاج", desc: "سمك بحري مشوي على الفحم أو بالفرن", img: "https://images.unsplash.com/photo-1534080564583-6be75777b70a?auto=format&fit=crop&w=400&q=80" },
-          { name: "قريدس (جمبري)", desc: "جمبري مشوي مع الزبدة والثوم والأعشاب العطرية", img: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=400&q=80" },
-          { name: "جوانح مشوية", desc: "أجنحة دجاج مشوية بصوص الباربكيو المدخن", img: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=400&q=80" }
+          { name: "مناسف لحم أو دجاج", prepTime: 60, desc: "منسف ملكي بالأرز الفاخر والمكسرات (توصية قبل بساعة)", img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80" },
+          { name: "سمك مشط", prepTime: 35, desc: "سمك مشط طازج متبل بالثوم والليمون ومشوي بعناية", img: "https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?auto=format&fit=crop&w=400&q=80" },
+          { name: "سمك أجاج", prepTime: 35, desc: "سمك بحري مشوي على الفحم أو بالفرن", img: "https://images.unsplash.com/photo-1534080564583-6be75777b70a?auto=format&fit=crop&w=400&q=80" },
+          { name: "قريدس (جمبري)", prepTime: 25, desc: "جمبري مشوي مع الزبدة والثوم والأعشاب العطرية", img: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=400&q=80" },
+          { name: "جوانح مشوية", prepTime: 25, desc: "أجنحة دجاج مشوية بصوص الباربكيو المدخن", img: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-أطباق-صحية-ومقبلات",
         categoryName: "أطباق صحية ومقبلات",
         items: [
-          { name: "وجبات صحية (أرز + شوربة)", desc: "وجبة خفيفة ومتوازنة للمهتمين بالرشاقة", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80" },
-          { name: "سلطة فتوش", desc: "خضار طازجة مع خبز محمص ورمان وسماق", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80" },
-          { name: "كبة مقلية", desc: "أقراص مقرمشة محشوة باللحم البلدي والمكسرات", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=400&q=80" },
-                    { name: "مقرمشات فوديز", desc: "سناك ونقانق ومقرمشات محضرة يومياً", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=400&q=80" }
+          { name: "وجبات صحية (أرز + شوربة)", prepTime: 20, desc: "وجبة خفيفة ومتوازنة للمهتمين بالرشاقة", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80" },
+          { name: "سلطة فتوش", prepTime: 15, desc: "خضار طازجة مع خبز محمص ورمان وسماق", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80" },
+          { name: "كبة مقلية", prepTime: 15, desc: "أقراص مقرمشة محشوة باللحم البلدي والمكسرات", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=400&q=80" },
+          { name: "مقرمشات فوديز", prepTime: 15, desc: "سناك ونقانق ومقرمشات محضرة يومياً", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
         id: "sec-فطائر-وصاج",
         categoryName: "فطائر وصاج",
         items: [
-          { name: "منافيش عالصاج", desc: "فطائر ومناقيش صاج ساخنة (زعتر، جبنة، محمرة)", img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=400&q=80" }
+          { name: "منافيش عالصاج", prepTime: 15, desc: "فطائر ومناقيش صاج ساخنة (زعتر، جبنة، محمرة)", img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=400&q=80" }
         ]
       }
     ];
@@ -547,7 +626,7 @@
       if (!confirm("هل تريد رفع الأصناف الحالية تلقائياً إلى قاعدة البيانات؟ سيتم استبدال البيانات الحالية.")) return;
       currentMenu = defaultInitialData;
       await saveMenu();
-      alert("تم رفع بيانات المنيو بنجاح!");
+      alert("تم رفع بيانات المنيو مع أوقات التجهيز بنجاح!");
     };
 
     function renderSelect() {
@@ -578,7 +657,10 @@
                 <div class="item-info">
                   <img src="${it.img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=100&q=80'}" class="item-thumb">
                   <div>
-                    <div style="font-weight:700;">${it.name || 'بدون اسم'}</div>
+                    <div style="font-weight:700;">
+                      ${it.name || 'بدون اسم'}
+                      <span class="prep-pill-admin">⏱ ${Number(it.prepTime) > 0 ? it.prepTime : 20} د</span>
+                    </div>
                     <div style="font-size:0.75rem; color:var(--text-muted);">${it.desc || ''}</div>
                   </div>
                 </div>
@@ -617,6 +699,7 @@
 
       document.getElementById("itemCatSelect").value = cat.id;
       document.getElementById("itemName").value = item.name || "";
+      document.getElementById("itemPrepTime").value = Number(item.prepTime) > 0 ? item.prepTime : 20;
       document.getElementById("itemDesc").value = item.desc || "";
 
       if (item.img) {
@@ -639,6 +722,7 @@
     window.cancelEditing = function() {
       editingState = { isEditing: false, catIdx: null, itIdx: null };
       document.getElementById("itemName").value = "";
+      document.getElementById("itemPrepTime").value = "20";
       document.getElementById("itemDesc").value = "";
       document.getElementById("itemImg").value = "";
       window.clearSelectedImage();
@@ -651,6 +735,8 @@
     window.saveItemAction = async function() {
       const catId = document.getElementById("itemCatSelect").value;
       const name = document.getElementById("itemName").value.trim();
+      const prepTimeVal = parseInt(document.getElementById("itemPrepTime").value, 10);
+      const prepTime = (prepTimeVal && prepTimeVal > 0) ? prepTimeVal : 20;
       const desc = document.getElementById("itemDesc").value.trim();
       const directUrl = document.getElementById("itemImg").value.trim();
 
@@ -661,7 +747,7 @@
 
       if (editingState.isEditing) {
         const oldCat = currentMenu[editingState.catIdx];
-        const updatedItem = { name, desc, img };
+        const updatedItem = { name, prepTime, desc, img };
 
         if (oldCat.id === catId) {
           oldCat.items[editingState.itIdx] = updatedItem;
@@ -684,9 +770,10 @@
           cat = currentMenu[0];
         }
         if (!cat.items) cat.items = [];
-        cat.items.push({ name, desc, img });
+        cat.items.push({ name, prepTime, desc, img });
 
         document.getElementById("itemName").value = "";
+        document.getElementById("itemPrepTime").value = "20";
         document.getElementById("itemDesc").value = "";
         document.getElementById("itemImg").value = "";
         window.clearSelectedImage();
