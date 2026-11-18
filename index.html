@@ -103,7 +103,6 @@
       gap: 5px;
     }
 
-    /* بطاقة تتبع الطلب الحي الخاصة بالزبون */
     .live-order-tracker {
       display: none;
       margin: 14px 16px 4px;
@@ -696,7 +695,6 @@
     </a>
   </header>
 
-  <!-- بطاقة العداد التنازلي الخاص بالزبون الذي طلب فقط -->
   <div id="liveOrderTracker" class="live-order-tracker">
     <div class="tracker-top-row">
       <span class="tracker-status-pill"><span class="pulse-dot"></span> طلبك قيد التحضير</span>
@@ -758,8 +756,8 @@
 
       <div class="install-shortcut-box">
         <div style="font-size:0.9rem; font-weight:900; color:var(--gold-primary); margin-bottom:4px;">📱 اجعل التطبيق على شاشتك الرئيسية</div>
-                <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
-          اضغط على نقاط المتصفح الثلاث (⋮) في الأعلى، ثم اختر <strong style="color:#fff;">"الإضافة إلى الشاشة الرئيسية"</strong> لفتح المنيو كتطبيق فخم وسريع دائماً!
+        <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
+                    اضغط على نقاط المتصفح الثلاث (⋮) في الأعلى، ثم اختر <strong style="color:#fff;">"الإضافة إلى الشاشة الرئيسية"</strong> لفتح المنيو كتطبيق فخم وسريع دائماً!
         </div>
       </div>
 
@@ -1103,7 +1101,7 @@
         osc.stop(ctx.currentTime + 0.6);
       } catch (e) {}
       if ("vibrate" in navigator) {
-        navigator.vibrate([300, 150, 300]);
+        navigator.vibrate([800, 250, 800, 250, 800]);
       }
     }
 
@@ -1119,7 +1117,7 @@
               badge: "https://i.postimg.cc/dthHNrBG/IMG-20261107-WA0006.jpg",
               tag,
               renotify: true,
-              vibrate: [200, 100, 200]
+              vibrate: [800, 250, 800, 250, 800]
             });
             return;
           }
@@ -1136,6 +1134,35 @@
         hour: '2-digit',
         minute: '2-digit'
       });
+    }
+
+    async function startBackgroundSwTimer(orderData) {
+      if (!("serviceWorker" in navigator)) return;
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        const worker = reg.active || navigator.serviceWorker.controller;
+        if (worker) {
+          worker.postMessage({
+            type: "START_ORDER_TIMER",
+            payload: {
+              orderNum: orderData.orderNum,
+              endTime: orderData.endTime,
+              readyClockStr: orderData.readyClockStr
+            }
+          });
+        }
+      } catch (e) {}
+    }
+
+    async function stopBackgroundSwTimer() {
+      if (!("serviceWorker" in navigator)) return;
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        const worker = reg.active || navigator.serviceWorker.controller;
+        if (worker) {
+          worker.postMessage({ type: "STOP_ORDER_TIMER" });
+        }
+      } catch (e) {}
     }
 
     async function submitToWhatsApp() {
@@ -1179,11 +1206,7 @@
       localStorage.setItem("foodies_customer_tracker", JSON.stringify(activeOrderData));
       activateCustomerTracker(activeOrderData);
 
-      sendSystemNotification(
-        `🍔 طلبك رقم #${orderNum} قيد التحضير - foodies.a`,
-        `المدة المتوقعة: ${prepMinutes} دقيقة • موعد الجاهزية: الساعة ${readyClockStr}`,
-        "foodies-active"
-      );
+      await startBackgroundSwTimer(activeOrderData);
 
       let text = `*طلب جديد رقم (#${orderNum}) - منيو foodies.a* 🍔✨\n\n`;
       text += `🛵 *نوع الطلب:* ${currentOrderType}\n`;
@@ -1262,6 +1285,7 @@
     function dismissActiveOrder() {
       localStorage.removeItem("foodies_customer_tracker");
       if (trackerInterval) clearInterval(trackerInterval);
+      stopBackgroundSwTimer();
       document.getElementById('liveOrderTracker').classList.remove('active');
       document.title = "foodies.a | المنيو الإلكتروني التفاعلي";
     }
@@ -1271,10 +1295,14 @@
         navigator.serviceWorker.register("./sw.js").catch(() => {});
       }
       fetchLiveMenu();
-      const savedTracker = localStorage.getItem("foodies_customer_tracker");
+          const savedTracker = localStorage.getItem("foodies_customer_tracker");
       if (savedTracker) {
         try {
-          activateCustomerTracker(JSON.parse(savedTracker));
+          const parsed = JSON.parse(savedTracker);
+          activateCustomerTracker(parsed);
+          if (parsed.endTime > Date.now()) {
+            startBackgroundSwTimer(parsed);
+          }
         } catch (e) {
           localStorage.removeItem("foodies_customer_tracker");
         }
