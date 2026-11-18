@@ -107,6 +107,12 @@
       cursor: pointer;
     }
 
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; }
 
@@ -250,7 +256,17 @@
       font-weight: 800;
       padding: 1px 7px;
       border-radius: 6px;
-      margin-right: 6px;
+      margin-right: 4px;
+    }
+    .price-pill-admin {
+      display: inline-block;
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--success);
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 1px 7px;
+      border-radius: 6px;
+      margin-right: 4px;
     }
     .item-actions {
       display: flex;
@@ -302,7 +318,7 @@
 
   <header>
     <h1>لوحة إدارة المنيو | foodies.a</h1>
-    <p>إدارة الأقسام والوجبات وأوقات التحضير لحظياً</p>
+    <p>إدارة الأقسام والوجبات والأسعار وأوقات التحضير لحظياً</p>
   </header>
 
   <!-- إدارة عداد الطلبات التسلسلي -->
@@ -338,9 +354,15 @@
       <input type="text" id="itemName" placeholder="اسم الوجبة">
     </div>
 
-    <div class="form-group">
-      <label>⏱ مدة تجهيز وتوصيل الوجبة (بالدقائق)</label>
-      <input type="number" id="itemPrepTime" min="1" max="300" value="20" placeholder="مثلاً: 20 أو 30 أو 60">
+    <div class="form-row-2">
+      <div class="form-group">
+        <label>⏱ مدة التجهيز (بالدقائق)</label>
+        <input type="number" id="itemPrepTime" min="1" max="300" value="20" placeholder="مثلاً: 20">
+      </div>
+      <div class="form-group">
+        <label>💰 السعر (اختياري)</label>
+        <input type="number" id="itemPrice" min="0" step="500" placeholder="مثلاً: 35000">
+      </div>
     </div>
 
     <div class="form-group">
@@ -550,10 +572,10 @@
           { name: "بانيني إيطالي", prepTime: 15, desc: "ساندويش إيطالي محمص بالجبنة الذائبة", img: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80" },
           { name: "فرانسيسكو", prepTime: 20, desc: "دجاج متبل مع جبنة الموزاريلا والذرة وصوص الصويا", img: "https://images.unsplash.com/photo-1619860860774-1e2e17343432?auto=format&fit=crop&w=400&q=80" },
           { name: "فاهيتا", prepTime: 20, desc: "شرائح دجاج مع فلفل ملون وبصل وتتبيلة مكسيكية", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
-          { name: "مكسيكي", prepTime: 20, desc: "خلطة لحم أو دجاج حار ببهارات مكسيكية لا تقاوم", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=400&q=80" },
+                    { name: "مكسيكي", prepTime: 20, desc: "خلطة لحم أو دجاج حار ببهارات مكسيكية لا تقاوم", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=400&q=80" },
           { name: "شيش طاووق", prepTime: 25, desc: "مكعبات دجاج مشوية بتتبيلة الليمون واللبن والثوم", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80" },
           { name: "شقف", prepTime: 30, desc: "لحم غنم طري مشوي على الفحم مع البقدونس", img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80" },
-                    { name: "شاورما", prepTime: 15, desc: "شاورما بتتبيلة أصيلة مع الثومية ومخلل الخيار المقرمش", img: "https://images.unsplash.com/photo-1633337474565-12c5b3644265?auto=format&fit=crop&w=400&q=80" }
+          { name: "شاورما", prepTime: 15, desc: "شاورما بتتبيلة أصيلة مع الثومية ومخلل الخيار المقرمش", img: "https://images.unsplash.com/photo-1633337474565-12c5b3644265?auto=format&fit=crop&w=400&q=80" }
         ]
       },
       {
@@ -626,7 +648,7 @@
       if (!confirm("هل تريد رفع الأصناف الحالية تلقائياً إلى قاعدة البيانات؟ سيتم استبدال البيانات الحالية.")) return;
       currentMenu = defaultInitialData;
       await saveMenu();
-      alert("تم رفع بيانات المنيو مع أوقات التجهيز بنجاح!");
+      alert("تم رفع بيانات المنيو بنجاح!");
     };
 
     function renderSelect() {
@@ -652,24 +674,29 @@
             <button class="btn-del-cat" onclick="deleteCategory(${catIdx})">حذف القسم 🗑️</button>
           </div>
           <div>
-            ${(cat.items || []).map((it, itIdx) => `
-              <div class="item-row">
-                <div class="item-info">
-                  <img src="${it.img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=100&q=80'}" class="item-thumb">
-                  <div>
-                    <div style="font-weight:700;">
-                      ${it.name || 'بدون اسم'}
-                      <span class="prep-pill-admin">⏱ ${Number(it.prepTime) > 0 ? it.prepTime : 20} د</span>
+            ${(cat.items || []).map((it, itIdx) => {
+              const pVal = Number(it.price);
+              const priceBadge = (pVal && pVal > 0) ? `<span class="price-pill-admin">${pVal.toLocaleString('en-US')} ل.س</span>` : '';
+              return `
+                <div class="item-row">
+                  <div class="item-info">
+                    <img src="${it.img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=100&q=80'}" class="item-thumb">
+                    <div>
+                      <div style="font-weight:700;">
+                        ${it.name || 'بدون اسم'}
+                        <span class="prep-pill-admin">⏱ ${Number(it.prepTime) > 0 ? it.prepTime : 20} د</span>
+                        ${priceBadge}
+                      </div>
+                      <div style="font-size:0.75rem; color:var(--text-muted);">${it.desc || ''}</div>
                     </div>
-                    <div style="font-size:0.75rem; color:var(--text-muted);">${it.desc || ''}</div>
+                  </div>
+                  <div class="item-actions">
+                    <button class="btn-edit-item" onclick="startEditItem(${catIdx}, ${itIdx})" title="تعديل">✏️</button>
+                    <button class="btn-del-item" onclick="deleteItem(${catIdx}, ${itIdx})" title="حذف">✕</button>
                   </div>
                 </div>
-                <div class="item-actions">
-                  <button class="btn-edit-item" onclick="startEditItem(${catIdx}, ${itIdx})" title="تعديل">✏️</button>
-                  <button class="btn-del-item" onclick="deleteItem(${catIdx}, ${itIdx})" title="حذف">✕</button>
-                </div>
-              </div>
-            `).join('')}
+              `;
+            }).join('')}
           </div>
         </div>
       `).join('');
@@ -700,6 +727,7 @@
       document.getElementById("itemCatSelect").value = cat.id;
       document.getElementById("itemName").value = item.name || "";
       document.getElementById("itemPrepTime").value = Number(item.prepTime) > 0 ? item.prepTime : 20;
+      document.getElementById("itemPrice").value = (Number(item.price) > 0) ? item.price : "";
       document.getElementById("itemDesc").value = item.desc || "";
 
       if (item.img) {
@@ -723,6 +751,7 @@
       editingState = { isEditing: false, catIdx: null, itIdx: null };
       document.getElementById("itemName").value = "";
       document.getElementById("itemPrepTime").value = "20";
+      document.getElementById("itemPrice").value = "";
       document.getElementById("itemDesc").value = "";
       document.getElementById("itemImg").value = "";
       window.clearSelectedImage();
@@ -737,6 +766,8 @@
       const name = document.getElementById("itemName").value.trim();
       const prepTimeVal = parseInt(document.getElementById("itemPrepTime").value, 10);
       const prepTime = (prepTimeVal && prepTimeVal > 0) ? prepTimeVal : 20;
+      const priceVal = parseFloat(document.getElementById("itemPrice").value);
+      const price = (priceVal && priceVal > 0) ? priceVal : 0;
       const desc = document.getElementById("itemDesc").value.trim();
       const directUrl = document.getElementById("itemImg").value.trim();
 
@@ -747,7 +778,7 @@
 
       if (editingState.isEditing) {
         const oldCat = currentMenu[editingState.catIdx];
-        const updatedItem = { name, prepTime, desc, img };
+        const updatedItem = { name, prepTime, price, desc, img };
 
         if (oldCat.id === catId) {
           oldCat.items[editingState.itIdx] = updatedItem;
@@ -770,10 +801,11 @@
           cat = currentMenu[0];
         }
         if (!cat.items) cat.items = [];
-        cat.items.push({ name, prepTime, desc, img });
+        cat.items.push({ name, prepTime, price, desc, img });
 
         document.getElementById("itemName").value = "";
         document.getElementById("itemPrepTime").value = "20";
+        document.getElementById("itemPrice").value = "";
         document.getElementById("itemDesc").value = "";
         document.getElementById("itemImg").value = "";
         window.clearSelectedImage();
