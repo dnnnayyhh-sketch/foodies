@@ -1,1 +1,924 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم foodies.a</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body: #0e1014;
+      --bg-surface: #171a21;
+      --bg-card: #1e222b;
+      --gold-primary: #e5a93c;
+      --gold-gradient: linear-gradient(135deg, #f6c065 0%, #d49326 100%);
+      --text-white: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --danger: #ef4444;
+      --success: #22c55e;
+      --radius: 12px;
+    }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+    body { background-color: var(--bg-body); color: var(--text-white); padding: 16px; padding-bottom: 60px; }
+
+    #authOverlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-body);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      padding: 20px;
+    }
+    .auth-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+    .auth-box h3 { margin-bottom: 12px; color: var(--gold-primary); }
+    .auth-box input { margin-bottom: 14px; text-align: center; letter-spacing: 4px; font-size: 1.2rem; }
+
+    header {
+      text-align: center;
+      padding: 12px 0 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 18px;
+    }
+    header h1 { font-size: 1.3rem; color: var(--gold-primary); font-weight: 900; }
+    header p { font-size: 0.8rem; color: var(--text-muted); }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .card h2 {
+      font-size: 1.02rem;
+      margin-bottom: 12px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card h2::before {
+      content: "";
+      width: 4px;
+      height: 16px;
+      background: var(--gold-gradient);
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-card);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 10px;
+    }
+    .control-row:last-child { margin-bottom: 0; }
+
+    .counter-num-display { font-size: 1.2rem; font-weight: 900; color: var(--gold-primary); }
+
+    .btn-status {
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn-status.open {
+      background: rgba(34, 197, 94, 0.16);
+      border-color: rgba(34, 197, 94, 0.4);
+      color: var(--success);
+    }
+    .btn-status.closed {
+      background: rgba(239, 68, 68, 0.16);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: var(--danger);
+    }
+
+    .btn-reset-counter {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: var(--danger);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fff;
+      font-size: 0.88rem;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold-primary); }
+
+    .upload-btn-wrapper { display: flex; gap: 10px; align-items: center; margin-top: 6px; }
+    .custom-file-upload {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: rgba(229, 169, 60, 0.1);
+      border: 1px dashed var(--gold-primary);
+      color: var(--gold-primary);
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+    .custom-file-upload.video-btn {
+      background: rgba(34, 197, 94, 0.08);
+      border-color: var(--success);
+      color: var(--success);
+    }
+    #imageFileInput, #videoFileInput { display: none; }
+
+    .preview-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 8px;
+      background: var(--bg-card);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+    }
+    .preview-img, .preview-vid {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #111;
+    }
+    .preview-info { flex: 1; font-size: 0.75rem; color: var(--text-muted); }
+    .btn-remove-preview { background: none; border: none; color: var(--danger); font-size: 0.8rem; cursor: pointer; font-weight: 700; }
+
+    .btn {
+      width: 100%;
+      background: var(--gold-gradient);
+      color: #101216;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-secondary { background: rgba(255, 255, 255, 0.06); color: var(--text-muted); margin-top: 14px; font-size: 0.8rem; }
+    .btn-cancel { background: rgba(239, 68, 68, 0.15); color: var(--danger); margin-top: 8px; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .cat-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .cat-header {
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .cat-title { font-weight: 800; font-size: 0.92rem; color: var(--gold-primary); }
+    .btn-del-cat { background: none; border: none; color: var(--danger); font-size: 0.8rem; cursor: pointer; font-weight: 700; }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.84rem;
+      gap: 8px;
+    }
+    .item-row:last-child { border-bottom: none; }
+    .item-row.sold-out { opacity: 0.5; }
+    .item-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .item-thumb { width: 38px; height: 38px; border-radius: 6px; object-fit: cover; background: #111; flex-shrink: 0; }
+
+    .pill-admin {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 6px;
+      margin-right: 4px;
+    }
+    .prep-pill { background: rgba(229, 169, 60, 0.15); color: var(--gold-primary); }
+    .price-pill { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+    .vid-pill { background: rgba(59, 130, 246, 0.18); color: #60a5fa; }
+
+    .item-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .btn-avail {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn-avail.on { background: rgba(34, 197, 94, 0.14); color: var(--success); border-color: rgba(34, 197, 94, 0.35); }
+    .btn-avail.off { background: rgba(239, 68, 68, 0.14); color: var(--danger); border-color: rgba(239, 68, 68, 0.35); }
+
+    .btn-icon { background: none; border: none; font-size: 0.95rem; cursor: pointer; padding: 4px; color: var(--gold-primary); }
+    .btn-icon.del { color: #f87171; }
+
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.84);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      z-index: 300;
+      font-weight: 800;
+      color: var(--gold-primary);
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="authOverlay">
+    <div class="auth-box">
+      <h3>أدخل رمز الدخول (PIN)</h3>
+      <input type="password" id="pinInput" placeholder="•••••" maxlength="5">
+      <button class="btn" onclick="checkPin()">دخول</button>
+    </div>
+  </div>
+
+  <div id="loadingOverlay">
+    <div id="loadingText">جاري معالجة البيانات...</div>
+  </div>
+
+  <header>
+    <h1>لوحة إدارة المنيو | foodies.a</h1>
+    <p>إدارة الأقسام والوجبات والفيديوهات والعروض لحظياً</p>
+  </header>
+
+  <!-- حالة المطعم والعداد وكود الخصم -->
+  <section class="card">
+    <h2>إعدادات المطعم والعداد اليومي</h2>
+
+    <div class="control-row">
+      <div>
+        <div style="font-size:0.82rem; font-weight:800;">حالة استقبال الطلبات</div>
+        <div style="font-size:0.72rem; color:var(--text-muted);">أغلق الطلبات مؤقتاً عند الضغط أو انتهاء الدوام</div>
+      </div>
+      <button id="btnStoreStatus" class="btn-status open" onclick="toggleStoreStatus()">مفتوح الآن</button>
+    </div>
+
+    <div class="control-row">
+      <div>
+        <div style="font-size:0.78rem; color:var(--text-muted);">رقم آخر طلب مسجل:</div>
+        <div class="counter-num-display" id="currentCounterDisplay">0</div>
+      </div>
+      <button class="btn-reset-counter" onclick="resetOrderCounter()">تصفير العداد (يبدأ من 1)</button>
+    </div>
+
+    <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border-subtle);">
+      <div style="font-size:0.82rem; font-weight:800; margin-bottom:8px; color:var(--gold-primary);">كود خصم للإعلانات (اختياري)</div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>كود الخصم (مثلاً FOODIES10)</label>
+          <input type="text" id="promoCodeInput" placeholder="اتركه فارغاً للإيقاف">
+        </div>
+        <div class="form-group">
+          <label>نسبة الخصم (%)</label>
+          <input type="number" id="promoDiscountInput" min="0" max="90" placeholder="مثلاً: 10">
+        </div>
+      </div>
+      <button class="btn" onclick="saveStoreSettings()">حفظ إعدادات الخصم</button>
+    </div>
+  </section>
+
+  <!-- إضافة قسم -->
+  <section class="card">
+    <h2>إضافة قسم جديد</h2>
+    <div class="form-group">
+      <input type="text" id="newCatName" placeholder="اسم القسم الجديد (مثلاً: حلويات، مشروبات)">
+    </div>
+    <button class="btn" onclick="addCategory()">+ إضافة القسم</button>
+  </section>
+
+  <!-- إضافة أو تعديل وجبة -->
+  <section class="card" id="itemFormCard">
+    <h2 id="itemFormTitle">إضافة وجبة ضمن قسم</h2>
+
+    <div class="form-group">
+      <label>القسم</label>
+      <select id="itemCatSelect"></select>
+    </div>
+
+    <div class="form-group">
+      <label>اسم الوجبة</label>
+      <input type="text" id="itemName" placeholder="اسم الوجبة">
+    </div>
+
+    <div class="form-row-2">
+      <div class="form-group">
+        <label>مدة التجهيز (بالدقائق)</label>
+        <input type="number" id="itemPrepTime" min="1" max="300" value="20" placeholder="20">
+      </div>
+      <div class="form-group">
+        <label>السعر (ل.س)</label>
+        <input type="number" id="itemPrice" min="0" step="500" placeholder="مثلاً: 35000">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>وصف الوجبة (اختياري)</label>
+      <textarea id="itemDesc" rows="2" placeholder="المكونات والتفاصيل"></textarea>
+    </div>
+
+    <!-- صورة الوجبة -->
+    <div class="form-group">
+      <label>صورة الوجبة (من الاستوديو مضغوطة أو رابط)</label>
+      <div class="upload-btn-wrapper">
+        <label for="imageFileInput" class="custom-file-upload">اختيار صورة من الاستوديو</label>
+        <input type="file" id="imageFileInput" accept="image/*" onchange="handleFileSelect(event)">
+      </div>
+      <input type="url" id="itemImg" placeholder="أو ضع رابط صورة خارجي (https://...)" style="margin-top: 8px;">
+
+      <div id="previewBox" class="preview-container" style="display: none;">
+        <img id="previewImgEl" src="" class="preview-img">
+        <div class="preview-info" id="previewStatus">تم تجهيز وضغط الصورة</div>
+        <button type="button" class="btn-remove-preview" onclick="clearSelectedImage()">إزالة ✕</button>
+      </div>
+    </div>
+
+    <!-- فيديو الوجبة (5 ثواني مضغوط من الاستوديو) -->
+    <div class="form-group">
+      <label>فيديو ريلز قصير للوجبة (اختياري - حتى 5 ثواني مضغوط تلقائياً)</label>
+      <div class="upload-btn-wrapper">
+        <label for="videoFileInput" class="custom-file-upload video-btn">اختيار فيديو من الاستوديو (يُضغط تلقائياً)</label>
+        <input type="file" id="videoFileInput" accept="video/*" onchange="handleVideoSelect(event)">
+      </div>
+      <input type="url" id="itemVideoUrl" placeholder="أو ضع رابط فيديو خارجي مباشر (mp4/webm)" style="margin-top: 8px;">
+
+      <div id="videoPreviewBox" class="preview-container" style="display: none;">
+        <video id="previewVidEl" class="preview-vid" muted loop autoplay playsinline></video>
+        <div class="preview-info" id="videoPreviewStatus">تم ضغط الفيديو بنجاح</div>
+        <button type="button" class="btn-remove-preview" onclick="clearSelectedVideo()">إزالة ✕</button>
+      </div>
+    </div>
+
+    <button class="btn" id="saveItemBtn" onclick="saveItemAction()">+ حفظ الوجبة في المنيو</button>
+    <button class="btn btn-cancel" id="cancelEditBtn" onclick="cancelEditing()" style="display: none;">إلغاء التعديل</button>
+  </section>
+
+  <!-- عرض الأقسام والوجبات -->
+  <section class="card">
+    <h2>الأقسام والوجبات الحالية</h2>
+    <div id="menuStructureView"></div>
+    <button class="btn btn-secondary" onclick="seedInitialMenu()">
+      استعادة القائمة الافتراضية (للاستخدام الأولي فقط)
+    </button>
+  </section>
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjsKc6cvadg6yPOpEoxKxDCez9uDhQDoA",
+      authDomain: "foodies-menu-b05de.firebaseapp.com",
+      databaseURL: "https://foodies-menu-b05de-default-rtdb.firebaseio.com",
+      projectId: "foodies-menu-b05de",
+      storageBucket: "foodies-menu-b05de.firebasestorage.app",
+      messagingSenderId: "399638503719",
+      appId: "1:399638503719:web:ec64af97611f95632dc902"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    const CORRECT_PIN = "12345";
+    const ADMIN_EMAIL = "admin@foodies.com";
+    const ADMIN_PASS = "123456";
+
+    let currentMenu = [];
+    let storeSettings = { isOpen: true, promoCode: "", promoDiscount: 0 };
+    let compressedImageBase64 = "";
+    let compressedVideoBase64 = "";
+
+    let editingState = { isEditing: false, catIdx: null, itIdx: null };
+
+    function showLoading(show, text = "جاري معالجة البيانات...") {
+      document.getElementById("loadingText").innerText = text;
+      document.getElementById("loadingOverlay").style.display = show ? "flex" : "none";
+    }
+
+    window.checkPin = async function() {
+      const pin = document.getElementById("pinInput").value;
+      if (pin !== CORRECT_PIN) {
+        alert("رمز الدخول غير صحيح!");
+        return;
+      }
+      showLoading(true, "جاري تسجيل الدخول...");
+      try {
+        await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASS);
+        document.getElementById("authOverlay").style.display = "none";
+        await Promise.all([loadMenu(), loadOrderCounter(), loadStoreSettings()]);
+      } catch (err) {
+        alert("خطأ في التحقق من الصلاحيات: " + err.message);
+      }
+      showLoading(false);
+    };
+
+    document.getElementById("pinInput").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") window.checkPin();
+    });
+
+    /* Store Settings (Open/Closed + Promo) */
+    async function loadStoreSettings() {
+      try {
+        const snap = await get(ref(db, "settings"));
+        const val = snap.val();
+        if (val) {
+          storeSettings = {
+            isOpen: val.isOpen !== false,
+            promoCode: val.promoCode || "",
+            promoDiscount: Number(val.promoDiscount) || 0
+          };
+        }
+        renderStoreSettingsUI();
+      } catch (e) {}
+    }
+
+    function renderStoreSettingsUI() {
+      const btn = document.getElementById("btnStoreStatus");
+      if (storeSettings.isOpen) {
+        btn.className = "btn-status open";
+        btn.innerText = "مفتوح الآن";
+      } else {
+        btn.className = "btn-status closed";
+        btn.innerText = "مغلق حالياً";
+      }
+      document.getElementById("promoCodeInput").value = storeSettings.promoCode;
+      document.getElementById("promoDiscountInput").value = storeSettings.promoDiscount || "";
+    }
+
+    window.toggleStoreStatus = async function() {
+      storeSettings.isOpen = !storeSettings.isOpen;
+      showLoading(true);
+      try {
+        await set(ref(db, "settings"), storeSettings);
+        renderStoreSettingsUI();
+      } catch (err) {
+        alert("تعذر تحديث الحالة: " + err.message);
+      }
+      showLoading(false);
+    };
+
+    window.saveStoreSettings = async function() {
+      storeSettings.promoCode = document.getElementById("promoCodeInput").value.trim().toUpperCase();
+      storeSettings.promoDiscount = parseInt(document.getElementById("promoDiscountInput").value, 10) || 0;
+      showLoading(true);
+      try {
+        await set(ref(db, "settings"), storeSettings);
+        alert("تم حفظ إعدادات كود الخصم بنجاح!");
+      } catch (err) {
+        alert("تعذر الحفظ: " + err.message);
+      }
+      showLoading(false);
+    };
+
+    /* Counter */
+    async function loadOrderCounter() {
+      try {
+        const snap = await get(ref(db, "orderCounter"));
+        const val = snap.val();
+        document.getElementById("currentCounterDisplay").innerText = (typeof val === "number" ? val : 0);
+      } catch (e) {}
+    }
+
+    window.resetOrderCounter = async function() {
+      if (!confirm("هل تريد تصفير عداد الطلبات ليبدأ الزبون القادم من رقم 1؟")) return;
+      showLoading(true);
+      try {
+        await set(ref(db, "orderCounter"), 0);
+        document.getElementById("currentCounterDisplay").innerText = "0";
+        alert("تم تصفير العداد بنجاح!");
+      } catch (err) {
+        alert("تعذر تصفير العداد: " + err.message);
+      }
+      showLoading(false);
+    };
+
+    /* Image Compression */
+    function compressImage(file, maxWidth = 480, maxHeight = 480, quality = 0.65) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+            if (width > height) {
+              if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
+            } else {
+              if (height > maxHeight) { width = Math.round((width * maxHeight) / height); height = maxHeight; }
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = reject;
+        };
+        reader.onerror = reject;
+      });
+    }
+
+    window.handleFileSelect = async function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      showLoading(true, "جاري ضغط الصورة...");
+      try {
+        compressedImageBase64 = await compressImage(file, 480, 480, 0.65);
+        document.getElementById("previewImgEl").src = compressedImageBase64;
+        document.getElementById("previewBox").style.display = "flex";
+        document.getElementById("previewStatus").innerText = "تم ضغط الصورة بنجاح من الاستوديو";
+        document.getElementById("itemImg").value = "";
+      } catch (err) {
+        alert("حدث خطأ أثناء معالجة وضغط الصورة");
+      }
+      showLoading(false);
+    };
+
+    window.clearSelectedImage = function() {
+      compressedImageBase64 = "";
+      document.getElementById("imageFileInput").value = "";
+      document.getElementById("previewBox").style.display = "none";
+      document.getElementById("previewImgEl").src = "";
+    };
+
+    /* Video Compression (Max 5s, muted, lightweight WebM/MP4 Base64 directly from Gallery) */
+    function compressVideoFile(file, maxSeconds = 5, targetWidth = 280) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const video = document.createElement("video");
+        video.src = url;
+        video.muted = true;
+        video.playsInline = true;
+
+        video.onloadedmetadata = () => {
+          const duration = Math.min(video.duration || 5, maxSeconds);
+          const scale = Math.min(1, targetWidth / (video.videoWidth || 280));
+          const w = Math.round((video.videoWidth || 280) * scale);
+          const h = Math.round((video.videoHeight || 480) * scale);
+
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+
+          if (!canvas.captureStream || typeof MediaRecorder === "undefined") {
+            URL.revokeObjectURL(url);
+            reject(new Error("المتصفح لا يدعم ضغط الفيديو المباشر"));
+            return;
+          }
+
+          const stream = canvas.captureStream(20);
+          let mimeType = "video/webm;codecs=vp8";
+          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = "video/webm";
+          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = "";
+
+          const recorder = new MediaRecorder(stream, mimeType ? { mimeType, videoBitsPerSecond: 260000 } : { videoBitsPerSecond: 260000 });
+          const chunks = [];
+          recorder.ondataavailable = (ev) => { if (ev.data.size > 0) chunks.push(ev.data); };
+
+          recorder.onstop = () => {
+            URL.revokeObjectURL(url);
+            const blob = new Blob(chunks, { type: mimeType || "video/webm" });
+            const reader = new FileReader();
+            reader.onloadend = () => resolve({ dataUrl: reader.result, sizeKB: Math.round(blob.size / 1024) });
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          };
+
+          video.currentTime = 0;
+          video.play().then(() => {
+            recorder.start();
+            const drawFrame = () => {
+              if (video.paused || video.ended || video.currentTime >= duration) {
+                video.pause();
+                if (recorder.state !== "inactive") recorder.stop();
+                return;
+              }
+              ctx.drawImage(video, 0, 0, w, h);
+              requestAnimationFrame(drawFrame);
+            };
+            drawFrame();
+            setTimeout(() => {
+              video.pause();
+              if (recorder.state !== "inactive") recorder.stop();
+            }, (duration * 1000) + 300);
+          }).catch(reject);
+        };
+
+        video.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error("تعذر قراءة ملف الفيديو"));
+        };
+      });
+    }
+
+    window.handleVideoSelect = async function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      showLoading(true, "جاري ضغط الفيديو (5 ثواني) يرجى الانتظار قليلاً...");
+      try {
+        const result = await compressVideoFile(file, 5, 280);
+        if (result.sizeKB > 1500) {
+          alert("حجم الفيديو بعد الضغط لا يزال كبيراً (" + result.sizeKB + " KB). يُفضل اختيار مقطع أقصر (3-5 ثواني).");
+        }
+        compressedVideoBase64 = result.dataUrl;
+        document.getElementById("previewVidEl").src = compressedVideoBase64;
+        document.getElementById("videoPreviewBox").style.display = "flex";
+        document.getElementById("videoPreviewStatus").innerText = `تم ضغط الفيديو بنجاح (${result.sizeKB} KB)`;
+        document.getElementById("itemVideoUrl").value = "";
+      } catch (err) {
+        alert("تعذر ضغط الفيديو تلقائياً على هذا المتصفح: " + err.message);
+      }
+      showLoading(false);
+    };
+
+    window.clearSelectedVideo = function() {
+      compressedVideoBase64 = "";
+      document.getElementById("videoFileInput").value = "";
+      document.getElementById("videoPreviewBox").style.display = "none";
+      document.getElementById("previewVidEl").src = "";
+    };
+
+    const defaultInitialData = [
+      {
+        id: "sec-فروج-ومشوي",
+        categoryName: "الفروج والمشوي",
+        items: [
+          { name: "فروج شواية", prepTime: 30, price: 85000, available: true, desc: "فروج مشوي على الشواية متبل بالبهارات الخاصة ومقمر", img: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=400&q=80" }
+        ]
+      }
+    ];
+
+    async function loadMenu() {
+      showLoading(true);
+      try {
+        const snapshot = await get(ref(db, "menu"));
+        const data = snapshot.val();
+        currentMenu = Array.isArray(data) ? data : (data ? Object.values(data) : []);
+        renderSelect();
+        renderView();
+      } catch (err) {
+        alert("خطأ في الاتصال بقاعدة البيانات: " + err.message);
+      }
+      showLoading(false);
+    }
+
+    async function saveMenu() {
+      showLoading(true, "جاري الحفظ في قاعدة البيانات...");
+      try {
+        await set(ref(db, "menu"), currentMenu);
+        renderSelect();
+        renderView();
+      } catch (err) {
+        alert("فشل حفظ التعديلات: " + err.message);
+      }
+      showLoading(false);
+    }
+
+    window.seedInitialMenu = async function() {
+      if (!confirm("هل تريد استعادة القائمة الافتراضية؟ سيتم استبدال البيانات الحالية.")) return;
+      currentMenu = defaultInitialData;
+      await saveMenu();
+      alert("تم الرفع بنجاح!");
+    };
+
+    function renderSelect() {
+      const select = document.getElementById("itemCatSelect");
+      if (currentMenu.length === 0) {
+        select.innerHTML = `<option value="">لا توجد أقسام حالياً</option>`;
+        return;
+      }
+      select.innerHTML = currentMenu.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
+    }
+
+    function renderView() {
+      const box = document.getElementById("menuStructureView");
+      if (currentMenu.length === 0) {
+        box.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:10px;">لا توجد أقسام مضافة بعد.</p>`;
+        return;
+      }
+
+      box.innerHTML = currentMenu.map((cat, catIdx) => `
+        <div class="cat-box">
+          <div class="cat-header">
+            <span class="cat-title">${cat.categoryName} (${cat.items ? cat.items.length : 0})</span>
+            <button class="btn-del-cat" onclick="deleteCategory(${catIdx})">حذف القسم</button>
+          </div>
+          <div>
+            ${(cat.items || []).map((it, itIdx) => {
+              const pVal = Number(it.price);
+              const priceBadge = (pVal && pVal > 0) ? `<span class="pill-admin price-pill">${pVal.toLocaleString('en-US')} ل.س</span>` : '';
+              const vidBadge = it.video ? `<span class="pill-admin vid-pill">فيديو ريلز</span>` : '';
+              const isAvail = it.available !== false;
+              return `
+                <div class="item-row ${isAvail ? '' : 'sold-out'}">
+                  <div class="item-info">
+                    <img src="${it.img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=100&q=80'}" class="item-thumb">
+                    <div style="min-width:0;">
+                      <div style="font-weight:700;">
+                        ${it.name || 'بدون اسم'}
+                        <span class="pill-admin prep-pill">${Number(it.prepTime) > 0 ? it.prepTime : 20} د</span>
+                        ${priceBadge}
+                        ${vidBadge}
+                      </div>
+                      <div style="font-size:0.74rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.desc || ''}</div>
+                    </div>
+                  </div>
+                  <div class="item-actions">
+                    <button class="btn-avail ${isAvail ? 'on' : 'off'}" onclick="toggleItemAvailable(${catIdx}, ${itIdx})">${isAvail ? 'متوفر' : 'نفد'}</button>
+                    <button class="btn-icon" onclick="startEditItem(${catIdx}, ${itIdx})" title="تعديل">✎</button>
+                    <button class="btn-icon del" onclick="deleteItem(${catIdx}, ${itIdx})" title="حذف">✕</button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.toggleItemAvailable = async function(catIdx, itIdx) {
+      const item = currentMenu[catIdx].items[itIdx];
+      item.available = (item.available === false) ? true : false;
+      await saveMenu();
+    };
+
+    window.addCategory = async function() {
+      const input = document.getElementById("newCatName");
+      const name = input.value.trim();
+      const id = "sec-" + (name ? name.replace(/\s+/g, '-').toLowerCase() : Date.now());
+      currentMenu.push({ id, categoryName: name || "قسم جديد", items: [] });
+      input.value = "";
+      await saveMenu();
+    };
+
+    window.deleteCategory = async function(catIdx) {
+      if (!confirm(`هل أنت متأكد من حذف قسم "${currentMenu[catIdx].categoryName}" بكل وجباته؟`)) return;
+      currentMenu.splice(catIdx, 1);
+      if (editingState.isEditing && editingState.catIdx === catIdx) window.cancelEditing();
+      await saveMenu();
+    };
+
+    window.startEditItem = function(catIdx, itIdx) {
+      const cat = currentMenu[catIdx];
+      const item = cat.items[itIdx];
+      editingState = { isEditing: true, catIdx, itIdx };
+
+      document.getElementById("itemCatSelect").value = cat.id;
+      document.getElementById("itemName").value = item.name || "";
+      document.getElementById("itemPrepTime").value = Number(item.prepTime) > 0 ? item.prepTime : 20;
+      document.getElementById("itemPrice").value = (Number(item.price) > 0) ? item.price : "";
+      document.getElementById("itemDesc").value = item.desc || "";
+
+      if (item.img) {
+        compressedImageBase64 = item.img;
+        document.getElementById("previewImgEl").src = item.img;
+        document.getElementById("previewBox").style.display = "flex";
+        document.getElementById("previewStatus").innerText = "الصورة الحالية للوجبة";
+        document.getElementById("itemImg").value = item.img.startsWith("data:") ? "" : item.img;
+      } else {
+        window.clearSelectedImage();
+      }
+
+      if (item.video) {
+        compressedVideoBase64 = item.video;
+        document.getElementById("previewVidEl").src = item.video;
+        document.getElementById("videoPreviewBox").style.display = "flex";
+        document.getElementById("videoPreviewStatus").innerText = "الفيديو الحالي للوجبة";
+        document.getElementById("itemVideoUrl").value = item.video.startsWith("data:") ? "" : item.video;
+      } else {
+        window.clearSelectedVideo();
+      }
+
+      document.getElementById("itemFormTitle").innerText = "تعديل الوجبة";
+      document.getElementById("saveItemBtn").innerText = "حفظ التعديلات";
+      document.getElementById("cancelEditBtn").style.display = "block";
+      document.getElementById("itemFormCard").scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.cancelEditing = function() {
+      editingState = { isEditing: false, catIdx: null, itIdx: null };
+      document.getElementById("itemName").value = "";
+      document.getElementById("itemPrepTime").value = "20";
+      document.getElementById("itemPrice").value = "";
+      document.getElementById("itemDesc").value = "";
+      document.getElementById("itemImg").value = "";
+      document.getElementById("itemVideoUrl").value = "";
+      window.clearSelectedImage();
+      window.clearSelectedVideo();
+
+      document.getElementById("itemFormTitle").innerText = "إضافة وجبة ضمن قسم";
+      document.getElementById("saveItemBtn").innerText = "+ حفظ الوجبة في المنيو";
+      document.getElementById("cancelEditBtn").style.display = "none";
+    };
+
+    window.saveItemAction = async function() {
+      const catId = document.getElementById("itemCatSelect").value;
+      const name = document.getElementById("itemName").value.trim();
+      const prepTimeVal = parseInt(document.getElementById("itemPrepTime").value, 10);
+      const prepTime = (prepTimeVal && prepTimeVal > 0) ? prepTimeVal : 20;
+      const priceVal = parseFloat(document.getElementById("itemPrice").value);
+      const price = (priceVal && priceVal > 0) ? priceVal : 0;
+      const desc = document.getElementById("itemDesc").value.trim();
+      const directImgUrl = document.getElementById("itemImg").value.trim();
+      const directVidUrl = document.getElementById("itemVideoUrl").value.trim();
+
+      let img = compressedImageBase64 || directImgUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80";
+      let video = compressedVideoBase64 || directVidUrl || "";
+
+      if (editingState.isEditing) {
+        const oldCat = currentMenu[editingState.catIdx];
+        const prevAvail = oldCat.items[editingState.itIdx].available !== false;
+        const updatedItem = { name, prepTime, price, desc, img, video, available: prevAvail };
+
+        if (oldCat.id === catId) {
+          oldCat.items[editingState.itIdx] = updatedItem;
+        } else {
+          oldCat.items.splice(editingState.itIdx, 1);
+                    let targetCat = currentMenu.find(c => c.id === catId) || currentMenu[0];
+          if (!targetCat.items) targetCat.items = [];
+          targetCat.items.push(updatedItem);
+        }
+        window.cancelEditing();
+      } else {
+        let cat = currentMenu.find(c => c.id === catId);
+        if (!cat) {
+          if (currentMenu.length === 0) currentMenu.push({ id: "sec-عام", categoryName: "عام", items: [] });
+          cat = currentMenu[0];
+        }
+        if (!cat.items) cat.items = [];
+        cat.items.push({ name, prepTime, price, desc, img, video, available: true });
+        window.cancelEditing();
+      }
+
+      await saveMenu();
+      alert("تم الحفظ بنجاح!");
+    };
+
+    window.deleteItem = async function(catIdx, itIdx) {
+      if (!confirm("هل تريد حذف هذه الوجبة؟")) return;
+      currentMenu[catIdx].items.splice(itIdx, 1);
+      if (editingState.isEditing && editingState.catIdx === catIdx && editingState.itIdx === itIdx) window.cancelEditing();
+      await saveMenu();
+    };
+  </script>
+</body>
+</html>
