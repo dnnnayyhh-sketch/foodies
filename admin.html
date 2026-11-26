@@ -7,19 +7,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-body: #0e1014;
-      --bg-surface: #171a21;
-      --bg-card: #1e222b;
-      --gold-primary: #e5a93c;
-      --gold-gradient: linear-gradient(135deg, #f6c065 0%, #d49326 100%);
-      --text-white: #f8fafc;
-      --text-muted: #94a3b8;
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --danger: #ef4444;
-      --success: #22c55e;
-      --radius: 12px;
+      --bg-body: #0e1014; --bg-surface: #171a21; --bg-card: #1e222b;
+      --gold-primary: #e5a93c; --gold-gradient: linear-gradient(135deg, #f6c065 0%, #d49326 100%);
+      --text-white: #f8fafc; --text-muted: #94a3b8;
+      --border-subtle: rgba(255, 255, 255, 0.08); --danger: #ef4444; --success: #22c55e; --radius: 12px;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
     body { background-color: var(--bg-body); color: var(--text-white); padding: 16px; padding-bottom: 60px; }
 
@@ -33,6 +25,7 @@
     header p { font-size: 0.8rem; color: var(--text-muted); }
 
     .card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius); padding: 16px; margin-bottom: 18px; }
+    .card.reels-card { border-color: rgba(34, 197, 94, 0.35); }
     .card h2 { font-size: 1.02rem; margin-bottom: 12px; color: #fff; display: flex; align-items: center; gap: 8px; }
     .card h2::before { content: ""; width: 4px; height: 16px; background: var(--gold-gradient); border-radius: 4px; display: inline-block; }
 
@@ -52,10 +45,9 @@
     input, select, textarea { width: 100%; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 0.88rem; outline: none; }
     input:focus, select:focus, textarea:focus { border-color: var(--gold-primary); }
 
-    .upload-btn-wrapper { display: flex; gap: 10px; align-items: center; margin-top: 6px; }
-    .custom-file-upload { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(229, 169, 60, 0.1); border: 1px dashed var(--gold-primary); color: var(--gold-primary); padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.84rem; font-weight: 700; }
-    .custom-file-upload.video-btn { background: rgba(34, 197, 94, 0.08); border-color: var(--success); color: var(--success); }
-    #imageFileInput, #videoFileInput { display: none; }
+    .custom-file-upload { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(229, 169, 60, 0.1); border: 1px dashed var(--gold-primary); color: var(--gold-primary); padding: 11px; border-radius: 8px; cursor: pointer; font-size: 0.84rem; font-weight: 700; margin-top: 4px; }
+    .custom-file-upload.video-btn { background: rgba(34, 197, 94, 0.1); border-color: var(--success); color: var(--success); }
+    #imageFileInput, #reelVideoFileInput { display: none; }
 
     .preview-container { display: flex; align-items: center; gap: 12px; margin-top: 8px; background: var(--bg-card); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); }
     .preview-img, .preview-vid { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; background: #111; }
@@ -63,6 +55,7 @@
     .btn-remove-preview { background: none; border: none; color: var(--danger); font-size: 0.8rem; cursor: pointer; font-weight: 700; }
 
     .btn { width: 100%; background: var(--gold-gradient); color: #101216; border: none; padding: 12px; border-radius: 8px; font-size: 0.92rem; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; }
+    .btn-green { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; }
     .btn:active { transform: scale(0.98); }
     .btn-secondary { background: rgba(255, 255, 255, 0.06); color: var(--text-muted); margin-top: 14px; font-size: 0.8rem; }
     .btn-cancel { background: rgba(239, 68, 68, 0.15); color: var(--danger); margin-top: 8px; border: 1px solid rgba(239, 68, 68, 0.3); }
@@ -81,13 +74,11 @@
     .pill-admin { display: inline-block; font-size: 0.68rem; font-weight: 800; padding: 1px 6px; border-radius: 6px; margin-right: 4px; }
     .prep-pill { background: rgba(229, 169, 60, 0.15); color: var(--gold-primary); }
     .price-pill { background: rgba(34, 197, 94, 0.15); color: var(--success); }
-    .vid-pill { background: rgba(59, 130, 246, 0.18); color: #60a5fa; }
 
     .item-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .btn-avail { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; cursor: pointer; border: 1px solid transparent; }
     .btn-avail.on { background: rgba(34, 197, 94, 0.14); color: var(--success); border-color: rgba(34, 197, 94, 0.35); }
     .btn-avail.off { background: rgba(239, 68, 68, 0.14); color: var(--danger); border-color: rgba(239, 68, 68, 0.35); }
-
     .btn-icon { background: none; border: none; font-size: 0.95rem; cursor: pointer; padding: 4px; color: var(--gold-primary); }
     .btn-icon.del { color: #f87171; }
 
@@ -104,9 +95,7 @@
     </div>
   </div>
 
-  <div id="loadingOverlay">
-    <div id="loadingText">جاري معالجة البيانات...</div>
-  </div>
+  <div id="loadingOverlay"><div id="loadingText">جاري معالجة البيانات...</div></div>
 
   <header>
     <h1>لوحة إدارة المنيو | foodies.a</h1>
@@ -115,7 +104,6 @@
 
   <section class="card">
     <h2>إعدادات المطعم والعداد اليومي</h2>
-
     <div class="control-row">
       <div>
         <div style="font-size:0.82rem; font-weight:800;">حالة استقبال الطلبات</div>
@@ -123,7 +111,6 @@
       </div>
       <button id="btnStoreStatus" class="btn-status open" onclick="toggleStoreStatus()">مفتوح الآن</button>
     </div>
-
     <div class="control-row">
       <div>
         <div style="font-size:0.78rem; color:var(--text-muted);">رقم آخر طلب مسجل:</div>
@@ -131,90 +118,68 @@
       </div>
       <button class="btn-reset-counter" onclick="resetOrderCounter()">تصفير العداد (يبدأ من 1)</button>
     </div>
-
     <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border-subtle);">
       <div style="font-size:0.82rem; font-weight:800; margin-bottom:8px; color:var(--gold-primary);">كود خصم للإعلانات (اختياري)</div>
       <div class="form-row-2">
-        <div class="form-group">
-          <label>كود الخصم (مثلاً FOODIES10)</label>
-          <input type="text" id="promoCodeInput" placeholder="اتركه فارغاً للإيقاف">
-        </div>
-        <div class="form-group">
-          <label>نسبة الخصم (%)</label>
-          <input type="number" id="promoDiscountInput" min="0" max="90" placeholder="مثلاً: 10">
-        </div>
+        <div class="form-group"><label>كود الخصم (مثلاً FOODIES10)</label><input type="text" id="promoCodeInput" placeholder="اتركه فارغاً للإيقاف"></div>
+        <div class="form-group"><label>نسبة الخصم (%)</label><input type="number" id="promoDiscountInput" min="0" max="90" placeholder="مثلاً: 10"></div>
       </div>
       <button class="btn" onclick="saveStoreSettings()">حفظ إعدادات الخصم</button>
     </div>
   </section>
 
-  <section class="card">
-    <h2>إضافة قسم جديد</h2>
-    <div class="form-group">
-      <input type="text" id="newCatName" placeholder="اسم القسم الجديد (مثلاً: حلويات، مشروبات)">
+  <!-- قسم مستقل لإدارة ريلز فوديز -->
+  <section class="card reels-card">
+    <h2>إدارة قسم ريلز فوديز (حتى 10 ثواني)</h2>
+    <div class="form-row-2">
+      <div class="form-group"><label>اسم الوجبة / عنوان الفيديو</label><input type="text" id="reelTitle" placeholder="مثلاً: سماش برغر بالجبنة"></div>
+      <div class="form-group"><label>السعر (اختياري)</label><input type="number" id="reelPrice" min="0" step="500" placeholder="مثلاً: 40000"></div>
     </div>
+    <div class="form-group"><label>وصف قصير للفيديو (اختياري)</label><input type="text" id="reelDesc" placeholder="وصف شهي يظهر فوق الفيديو"></div>
+    <div class="form-group">
+      <label>اختر الفيديو من الاستوديو (يُضغط تلقائياً حتى 10 ثواني)</label>
+      <label for="reelVideoFileInput" class="custom-file-upload video-btn">اختيار فيديو من الاستوديو</label>
+      <input type="file" id="reelVideoFileInput" accept="video/*" onchange="handleReelVideoSelect(event)">
+      <input type="url" id="reelVideoUrl" placeholder="أو ضع رابط فيديو مباشر (mp4/webm)" style="margin-top: 8px;">
+      <div id="reelPreviewBox" class="preview-container" style="display: none;">
+        <video id="reelPreviewVid" class="preview-vid" muted loop autoplay playsinline></video>
+        <div class="preview-info" id="reelPreviewStatus">الفيديو جاهز للنشر</div>
+        <button type="button" class="btn-remove-preview" onclick="clearReelVideo()">إزالة ✕</button>
+      </div>
+    </div>
+    <button class="btn btn-green" onclick="addReelAction()">+ نشر الفيديو في ريلز فوديز</button>
+
+    <div style="margin-top: 14px; border-top: 1px solid var(--border-subtle); padding-top: 12px;">
+      <div style="font-size:0.82rem; font-weight:800; color:var(--text-muted); margin-bottom:8px;">الفيديوهات المنشورة حالياً في ريلز فوديز:</div>
+      <div id="reelsListView"></div>
+    </div>
+  </section>
+    <section class="card">
+    <h2>إضافة قسم جديد</h2>
+    <div class="form-group"><input type="text" id="newCatName" placeholder="اسم القسم الجديد (مثلاً: حلويات، مشروبات)"></div>
     <button class="btn" onclick="addCategory()">+ إضافة القسم</button>
   </section>
 
   <section class="card" id="itemFormCard">
     <h2 id="itemFormTitle">إضافة وجبة ضمن قسم</h2>
-
-    <div class="form-group">
-      <label>القسم</label>
-      <select id="itemCatSelect"></select>
-    </div>
-
-    <div class="form-group">
-      <label>اسم الوجبة</label>
-      <input type="text" id="itemName" placeholder="اسم الوجبة">
-    </div>
-
+    <div class="form-group"><label>القسم</label><select id="itemCatSelect"></select></div>
+    <div class="form-group"><label>اسم الوجبة</label><input type="text" id="itemName" placeholder="اسم الوجبة"></div>
     <div class="form-row-2">
-      <div class="form-group">
-        <label>مدة التجهيز (بالدقائق)</label>
-        <input type="number" id="itemPrepTime" min="1" max="300" value="20" placeholder="20">
-      </div>
-      <div class="form-group">
-        <label>السعر (ل.س)</label>
-        <input type="number" id="itemPrice" min="0" step="500" placeholder="مثلاً: 35000">
-      </div>
+      <div class="form-group"><label>مدة التجهيز (بالدقائق)</label><input type="number" id="itemPrepTime" min="1" max="300" value="20"></div>
+      <div class="form-group"><label>السعر (ل.س)</label><input type="number" id="itemPrice" min="0" step="500" placeholder="مثلاً: 35000"></div>
     </div>
-
-    <div class="form-group">
-      <label>وصف الوجبة (اختياري)</label>
-      <textarea id="itemDesc" rows="2" placeholder="المكونات والتفاصيل"></textarea>
-    </div>
-
+    <div class="form-group"><label>وصف الوجبة (اختياري)</label><textarea id="itemDesc" rows="2" placeholder="المكونات والتفاصيل"></textarea></div>
     <div class="form-group">
       <label>صورة الوجبة (من الاستوديو مضغوطة أو رابط)</label>
-      <div class="upload-btn-wrapper">
-        <label for="imageFileInput" class="custom-file-upload">اختيار صورة من الاستوديو</label>
-        <input type="file" id="imageFileInput" accept="image/*" onchange="handleFileSelect(event)">
-      </div>
+      <label for="imageFileInput" class="custom-file-upload">اختيار صورة من الاستوديو</label>
+      <input type="file" id="imageFileInput" accept="image/*" onchange="handleFileSelect(event)">
       <input type="url" id="itemImg" placeholder="أو ضع رابط صورة خارجي (https://...)" style="margin-top: 8px;">
-
       <div id="previewBox" class="preview-container" style="display: none;">
         <img id="previewImgEl" src="" class="preview-img">
         <div class="preview-info" id="previewStatus">تم تجهيز وضغط الصورة</div>
         <button type="button" class="btn-remove-preview" onclick="clearSelectedImage()">إزالة ✕</button>
       </div>
     </div>
-
-    <div class="form-group">
-      <label>فيديو ريلز فوديز (اختياري - حتى 5 ثواني يُضغط تلقائياً)</label>
-      <div class="upload-btn-wrapper">
-        <label for="videoFileInput" class="custom-file-upload video-btn">اختيار فيديو من الاستوديو لـ ريلز فوديز</label>
-        <input type="file" id="videoFileInput" accept="video/*" onchange="handleVideoSelect(event)">
-      </div>
-      <input type="url" id="itemVideoUrl" placeholder="أو ضع رابط فيديو خارجي مباشر (mp4/webm)" style="margin-top: 8px;">
-
-      <div id="videoPreviewBox" class="preview-container" style="display: none;">
-        <video id="previewVidEl" class="preview-vid" muted loop autoplay playsinline></video>
-        <div class="preview-info" id="videoPreviewStatus">تم تجهيز الفيديو بنجاح</div>
-        <button type="button" class="btn-remove-preview" onclick="clearSelectedVideo()">إزالة ✕</button>
-      </div>
-    </div>
-
     <button class="btn" id="saveItemBtn" onclick="saveItemAction()">+ حفظ الوجبة في المنيو</button>
     <button class="btn btn-cancel" id="cancelEditBtn" onclick="cancelEditing()" style="display: none;">إلغاء التعديل</button>
   </section>
@@ -223,8 +188,8 @@
     <h2>الأقسام والوجبات الحالية</h2>
     <div id="menuStructureView"></div>
     <button class="btn btn-secondary" onclick="seedInitialMenu()">استعادة القائمة الافتراضية (للاستخدام الأولي فقط)</button>
-      </section>
-        <script type="module">
+  </section>
+    <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -243,14 +208,11 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    const CORRECT_PIN = "12345";
-    const ADMIN_EMAIL = "admin@foodies.com";
-    const ADMIN_PASS = "123456";
+    const CORRECT_PIN = "12345", ADMIN_EMAIL = "admin@foodies.com", ADMIN_PASS = "123456";
 
-    let currentMenu = [];
+    let currentMenu = [], reelsList = [];
     let storeSettings = { isOpen: true, promoCode: "", promoDiscount: 0 };
-    let compressedImageBase64 = "";
-    let compressedVideoBase64 = "";
+    let compressedImageBase64 = "", compressedReelBase64 = "";
     let editingState = { isEditing: false, catIdx: null, itIdx: null };
 
     function showLoading(show, text = "جاري معالجة البيانات...") {
@@ -259,453 +221,299 @@
     }
 
     window.checkPin = async function() {
-      const pin = document.getElementById("pinInput").value;
-      if (pin !== CORRECT_PIN) { alert("رمز الدخول غير صحيح!"); return; }
+      if (document.getElementById("pinInput").value !== CORRECT_PIN) { alert("رمز الدخول غير صحيح!"); return; }
       showLoading(true, "جاري تسجيل الدخول...");
       try {
         await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASS);
         document.getElementById("authOverlay").style.display = "none";
         await Promise.all([loadMenu(), loadOrderCounter()]);
-      } catch (err) {
-        alert("خطأ في التحقق من الصلاحيات: " + err.message);
-      }
+      } catch (err) { alert("خطأ في التحقق من الصلاحيات: " + err.message); }
       showLoading(false);
     };
-
-    document.getElementById("pinInput").addEventListener("keypress", (e) => {
-      if (e.key === "Enter") window.checkPin();
-    });
+    document.getElementById("pinInput").addEventListener("keypress", (e) => { if (e.key === "Enter") window.checkPin(); });
 
     function renderStoreSettingsUI() {
       const btn = document.getElementById("btnStoreStatus");
-      if (storeSettings.isOpen) {
-        btn.className = "btn-status open";
-        btn.innerText = "مفتوح الآن";
-      } else {
-        btn.className = "btn-status closed";
-        btn.innerText = "مغلق حالياً";
-      }
+      btn.className = storeSettings.isOpen ? "btn-status open" : "btn-status closed";
+      btn.innerText = storeSettings.isOpen ? "مفتوح الآن" : "مغلق حالياً";
       document.getElementById("promoCodeInput").value = storeSettings.promoCode;
       document.getElementById("promoDiscountInput").value = storeSettings.promoDiscount || "";
     }
 
-    async function saveMenuAndSettings() {
+    async function saveAllData() {
       showLoading(true, "جاري الحفظ في قاعدة البيانات...");
       try {
         const payload = [
           ...currentMenu,
-          {
-            id: "__foodies_settings__",
-            isSettings: true,
-            isOpen: storeSettings.isOpen,
-            promoCode: storeSettings.promoCode,
-            promoDiscount: storeSettings.promoDiscount
-          }
+          { id: "__foodies_settings__", isSettings: true, isOpen: storeSettings.isOpen, promoCode: storeSettings.promoCode, promoDiscount: storeSettings.promoDiscount },
+          { id: "__foodies_reels__", isReels: true, reels: reelsList }
         ];
         await set(ref(db, "menu"), payload);
-        renderSelect();
-        renderView();
-        renderStoreSettingsUI();
+        renderSelect(); renderView(); renderReelsList(); renderStoreSettingsUI();
         return true;
-      } catch (err) {
-        alert("فشل حفظ التعديلات: " + err.message);
-        return false;
-      } finally {
-        showLoading(false);
-      }
+      } catch (err) { alert("فشل الحفظ: " + err.message); return false; }
+      finally { showLoading(false); }
     }
 
-    window.toggleStoreStatus = async function() {
-      storeSettings.isOpen = !storeSettings.isOpen;
-      await saveMenuAndSettings();
-    };
-
-    window.saveStoreSettings = async function() {
+    window.toggleStoreStatus = async () => { storeSettings.isOpen = !storeSettings.isOpen; await saveAllData(); };
+    window.saveStoreSettings = async () => {
       storeSettings.promoCode = document.getElementById("promoCodeInput").value.trim().toUpperCase();
       storeSettings.promoDiscount = parseInt(document.getElementById("promoDiscountInput").value, 10) || 0;
-      const ok = await saveMenuAndSettings();
-      if (ok) alert("تم حفظ إعدادات كود الخصم بنجاح!");
+      if (await saveAllData()) alert("تم حفظ إعدادات الخصم بنجاح!");
     };
 
     async function loadOrderCounter() {
-      try {
-        const snap = await get(ref(db, "orderCounter"));
-        const val = snap.val();
-        document.getElementById("currentCounterDisplay").innerText = (typeof val === "number" ? val : 0);
-      } catch (e) {}
+      try { const val = (await get(ref(db, "orderCounter"))).val(); document.getElementById("currentCounterDisplay").innerText = (typeof val === "number" ? val : 0); } catch (e) {}
     }
-
-    window.resetOrderCounter = async function() {
+    window.resetOrderCounter = async () => {
       if (!confirm("هل تريد تصفير عداد الطلبات ليبدأ الزبون القادم من رقم 1؟")) return;
       showLoading(true);
-      try {
-        await set(ref(db, "orderCounter"), 0);
-        document.getElementById("currentCounterDisplay").innerText = "0";
-        alert("تم تصفير العداد بنجاح!");
-      } catch (err) {
-        alert("تصفير العداد يحتاج تفعيل صلاحية orderCounter في قواعد Firebase فقط.");
-      }
+      try { await set(ref(db, "orderCounter"), 0); document.getElementById("currentCounterDisplay").innerText = "0"; alert("تم تصفير العداد بنجاح!"); }
+      catch (err) { alert("تعذر تصفير العداد: " + err.message); }
       showLoading(false);
     };
 
-    function compressImage(file, maxWidth = 480, maxHeight = 480, quality = 0.65) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            let w = img.width, h = img.height;
-            if (w > h) { if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; } }
-            else { if (h > maxHeight) { w = Math.round((w * maxHeight) / h); h = maxHeight; } }
-            const canvas = document.createElement("canvas");
-            canvas.width = w; canvas.height = h;
-            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL("image/jpeg", quality));
-          };
-          img.onerror = reject;
-        };
-        reader.onerror = reject;
-      });
-    }
-
-    window.handleFileSelect = async function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      showLoading(true, "جاري ضغط الصورة...");
-      try {
-        compressedImageBase64 = await compressImage(file, 480, 480, 0.65);
-        document.getElementById("previewImgEl").src = compressedImageBase64;
-        document.getElementById("previewBox").style.display = "flex";
-        document.getElementById("previewStatus").innerText = "تم ضغط الصورة بنجاح من الاستوديو";
-        document.getElementById("itemImg").value = "";
-      } catch (err) { alert("حدث خطأ أثناء معالجة الصورة"); }
-      showLoading(false);
-    };
-
-    window.clearSelectedImage = function() {
-      compressedImageBase64 = "";
-      document.getElementById("imageFileInput").value = "";
-      document.getElementById("previewBox").style.display = "none";
-      document.getElementById("previewImgEl").src = "";
-    };
-              function compressVideoFile(file, maxSeconds = 5, targetWidth = 280) {
+    function compressVideoFile(file, maxSeconds = 10, targetWidth = 260) {
       return new Promise((resolve, reject) => {
         const url = URL.createObjectURL(file);
         const video = document.createElement("video");
         video.src = url; video.muted = true; video.playsInline = true;
-
         video.onloadedmetadata = () => {
-          const duration = Math.min(video.duration || 5, maxSeconds);
-          const scale = Math.min(1, targetWidth / (video.videoWidth || 280));
-          const w = Math.round((video.videoWidth || 280) * scale);
-          const h = Math.round((video.videoHeight || 480) * scale);
-
-          const canvas = document.createElement("canvas");
-          canvas.width = w; canvas.height = h;
+          const duration = Math.min(video.duration || 10, maxSeconds);
+          const scale = Math.min(1, targetWidth / (video.videoWidth || 260));
+          const w = Math.round((video.videoWidth || 260) * scale), h = Math.round((video.videoHeight || 460) * scale);
+          const canvas = document.createElement("canvas"); canvas.width = w; canvas.height = h;
           const ctx = canvas.getContext("2d");
-
-          if (!canvas.captureStream || typeof MediaRecorder === "undefined") {
-            URL.revokeObjectURL(url);
-            reject(new Error("NO_RECORDER"));
-            return;
-          }
-
-          const stream = canvas.captureStream(20);
-          let mimeType = "video/webm;codecs=vp8";
-          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = "video/webm";
-          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = "";
-
-          const recorder = new MediaRecorder(stream, mimeType ? { mimeType, videoBitsPerSecond: 240000 } : { videoBitsPerSecond: 240000 });
+          if (!canvas.captureStream || typeof MediaRecorder === "undefined") { URL.revokeObjectURL(url); reject(new Error("NO_REC")); return; }
+          const stream = canvas.captureStream(18);
+          let mime = "video/webm;codecs=vp8";
+          if (!MediaRecorder.isTypeSupported(mime)) mime = "video/webm";
+          if (!MediaRecorder.isTypeSupported(mime)) mime = "";
+          const recorder = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 200000 } : { videoBitsPerSecond: 200000 });
           const chunks = [];
           recorder.ondataavailable = (ev) => { if (ev.data.size > 0) chunks.push(ev.data); };
-
           recorder.onstop = () => {
             URL.revokeObjectURL(url);
-            const blob = new Blob(chunks, { type: mimeType || "video/webm" });
-            const reader = new FileReader();
-            reader.onloadend = () => resolve({ dataUrl: reader.result, sizeKB: Math.round(blob.size / 1024) });
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
+            const blob = new Blob(chunks, { type: mime || "video/webm" });
+            const r = new FileReader();
+            r.onloadend = () => resolve({ dataUrl: r.result, sizeKB: Math.round(blob.size / 1024) });
+            r.onerror = reject; r.readAsDataURL(blob);
           };
-
           video.currentTime = 0;
           video.play().then(() => {
             recorder.start();
-            const drawFrame = () => {
-              if (video.paused || video.ended || video.currentTime >= duration) {
-                video.pause();
-                if (recorder.state !== "inactive") recorder.stop();
-                return;
-              }
-              ctx.drawImage(video, 0, 0, w, h);
-              requestAnimationFrame(drawFrame);
+            const draw = () => {
+              if (video.paused || video.ended || video.currentTime >= duration) { video.pause(); if (recorder.state !== "inactive") recorder.stop(); return; }
+              ctx.drawImage(video, 0, 0, w, h); requestAnimationFrame(draw);
             };
-            drawFrame();
-            setTimeout(() => {
-              video.pause();
-              if (recorder.state !== "inactive") recorder.stop();
-            }, (duration * 1000) + 300);
+            draw();
+            setTimeout(() => { video.pause(); if (recorder.state !== "inactive") recorder.stop(); }, (duration * 1000) + 400);
           }).catch(reject);
         };
-
         video.onerror = () => { URL.revokeObjectURL(url); reject(new Error("READ_ERR")); };
       });
     }
 
-    function readRawVideoAsDataUrl(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve({ dataUrl: reader.result, sizeKB: Math.round(file.size / 1024) });
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+    function readRawFile(file) {
+      return new Promise((res, rej) => { const r = new FileReader(); r.onloadend = () => res({ dataUrl: r.result, sizeKB: Math.round(file.size / 1024) }); r.onerror = rej; r.readAsDataURL(file); });
     }
-
-    window.handleVideoSelect = async function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      showLoading(true, "جاري ضغط وتجهيز الفيديو لـ ريلز فوديز...");
+          window.handleReelVideoSelect = async function(e) {
+      const file = e.target.files[0]; if (!file) return;
+      showLoading(true, "جاري ضغط الفيديو (حتى 10 ثواني) يرجى الانتظار...");
       try {
-        let result;
+        let res = null;
         try {
-          result = await compressVideoFile(file, 5, 280);
-        } catch (compErr) {
-          if (file.size <= 1800 * 1024) {
-            result = await readRawVideoAsDataUrl(file);
-          } else {
-            throw new Error("حجم الفيديو كبير والمتصفح لا يدعم ضغطه، يرجى اختيار فيديو أقصر (3-5 ثواني).");
-          }
+          res = await compressVideoFile(file, 10, 260);
+          if (!res || res.sizeKB < 5) throw new Error("EMPTY");
+        } catch (err) {
+          if (file.size <= 3500 * 1024) { res = await readRawFile(file); }
+          else { throw new Error("حجم الفيديو أكبر من 3.5 ميغا والمتصفح لم يضغطه. يرجى قص الفيديو لـ 5-10 ثواني ثم المحاولة."); }
         }
-        compressedVideoBase64 = result.dataUrl;
-        document.getElementById("previewVidEl").src = compressedVideoBase64;
-        document.getElementById("videoPreviewBox").style.display = "flex";
-        document.getElementById("videoPreviewStatus").innerText = `جاهز لـ ريلز فوديز (${result.sizeKB} KB)`;
-        document.getElementById("itemVideoUrl").value = "";
-      } catch (err) {
-        alert(err.message);
-      }
+        compressedReelBase64 = res.dataUrl;
+        document.getElementById("reelPreviewVid").src = compressedReelBase64;
+        document.getElementById("reelPreviewBox").style.display = "flex";
+        document.getElementById("reelPreviewStatus").innerText = `جاهز للنشر (${res.sizeKB} KB)`;
+        document.getElementById("reelVideoUrl").value = "";
+      } catch (err) { alert(err.message); }
       showLoading(false);
     };
 
-    window.clearSelectedVideo = function() {
-      compressedVideoBase64 = "";
-      document.getElementById("videoFileInput").value = "";
-      document.getElementById("videoPreviewBox").style.display = "none";
-      document.getElementById("previewVidEl").src = "";
+    window.clearReelVideo = function() {
+      compressedReelBase64 = "";
+      document.getElementById("reelVideoFileInput").value = "";
+      document.getElementById("reelPreviewBox").style.display = "none";
+      document.getElementById("reelPreviewVid").src = "";
     };
 
-    const defaultInitialData = [
-      {
-        id: "sec-فروج-ومشوي",
-        categoryName: "الفروج والمشوي",
-        items: [
-          { name: "فروج شواية", prepTime: 30, price: 85000, available: true, desc: "فروج مشوي على الشواية متبل بالبهارات الخاصة ومقمر", img: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=400&q=80" }
-        ]
-      }
-    ];
-
-    async function loadMenu() {
-      showLoading(true);
-      try {
-        const snapshot = await get(ref(db, "menu"));
-        const data = snapshot.val();
-        const rawList = Array.isArray(data) ? data : (data ? Object.values(data) : []);
-
-        const settingsEntry = rawList.find(x => x && (x.id === "__foodies_settings__" || x.isSettings));
-        if (settingsEntry) {
-          storeSettings = {
-            isOpen: settingsEntry.isOpen !== false,
-            promoCode: settingsEntry.promoCode || "",
-            promoDiscount: Number(settingsEntry.promoDiscount) || 0
-          };
-        }
-        currentMenu = rawList.filter(x => x && x.id !== "__foodies_settings__" && !x.isSettings);
-
-        renderStoreSettingsUI();
-        renderSelect();
-        renderView();
-      } catch (err) {
-        alert("خطأ في الاتصال بقاعدة البيانات: " + err.message);
-      }
-      showLoading(false);
-    }
-
-    window.seedInitialMenu = async function() {
-      if (!confirm("هل تريد استعادة القائمة الافتراضية؟ سيتم استبدال البيانات الحالية.")) return;
-      currentMenu = defaultInitialData;
-      await saveMenuAndSettings();
-      alert("تم الرفع بنجاح!");
+    window.addReelAction = async function() {
+      const title = document.getElementById("reelTitle").value.trim() || "وجبة foodies.a";
+      const price = parseFloat(document.getElementById("reelPrice").value) || 0;
+      const desc = document.getElementById("reelDesc").value.trim();
+      const video = compressedReelBase64 || document.getElementById("reelVideoUrl").value.trim();
+      if (!video || video.length < 15) { alert("يرجى اختيار فيديو من الاستوديو أو وضع رابط فيديو أولاً!"); return; }
+      reelsList.unshift({ title, price, desc, video });
+      document.getElementById("reelTitle").value = "";
+      document.getElementById("reelPrice").value = "";
+      document.getElementById("reelDesc").value = "";
+      document.getElementById("reelVideoUrl").value = "";
+      window.clearReelVideo();
+      if (await saveAllData()) alert("تم نشر الفيديو في ريلز فوديز بنجاح!");
     };
 
-    function renderSelect() {
-      const select = document.getElementById("itemCatSelect");
-      if (currentMenu.length === 0) { select.innerHTML = `<option value="">لا توجد أقسام حالياً</option>`; return; }
-      select.innerHTML = currentMenu.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
-    }
+    window.deleteReel = async function(idx) {
+      if (!confirm("هل تريد حذف هذا الفيديو من ريلز فوديز؟")) return;
+      reelsList.splice(idx, 1);
+      await saveAllData();
+    };
 
-    function renderView() {
-      const box = document.getElementById("menuStructureView");
-      if (currentMenu.length === 0) { box.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:10px;">لا توجد أقسام مضافة بعد.</p>`; return; }
-
-      box.innerHTML = currentMenu.map((cat, catIdx) => `
-        <div class="cat-box">
-          <div class="cat-header">
-            <span class="cat-title">${cat.categoryName} (${cat.items ? cat.items.length : 0})</span>
-            <button class="btn-del-cat" onclick="deleteCategory(${catIdx})">حذف القسم</button>
-          </div>
-          <div>
-            ${(cat.items || []).map((it, itIdx) => {
-              const pVal = Number(it.price);
-              const priceBadge = (pVal && pVal > 0) ? `<span class="pill-admin price-pill">${pVal.toLocaleString('en-US')} ل.س</span>` : '';
-              const vidBadge = it.video ? `<span class="pill-admin vid-pill">ريلز فوديز</span>` : '';
-              const isAvail = it.available !== false;
-              return `
-                <div class="item-row ${isAvail ? '' : 'sold-out'}">
-                  <div class="item-info">
-                    <img src="${it.img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=100&q=80'}" class="item-thumb">
-                    <div style="min-width:0;">
-                      <div style="font-weight:700;">
-                        ${it.name || 'بدون اسم'}
-                        <span class="pill-admin prep-pill">${Number(it.prepTime) > 0 ? it.prepTime : 20} د</span>
-                        ${priceBadge}
-                        ${vidBadge}
-                      </div>
-                      <div style="font-size:0.74rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.desc || ''}</div>
-                    </div>
-                  </div>
-                  <div class="item-actions">
-                    <button class="btn-avail ${isAvail ? 'on' : 'off'}" onclick="toggleItemAvailable(${catIdx}, ${itIdx})">${isAvail ? 'متوفر' : 'نفد'}</button>
-                    <button class="btn-icon" onclick="startEditItem(${catIdx}, ${itIdx})" title="تعديل">✎</button>
-                    <button class="btn-icon del" onclick="deleteItem(${catIdx}, ${itIdx})" title="حذف">✕</button>
-                  </div>
-                </div>
-              `;
-            }).join('')}
+    function renderReelsList() {
+      const box = document.getElementById("reelsListView");
+      if (!reelsList.length) { box.innerHTML = `<p style="font-size:0.78rem; color:var(--text-muted); text-align:center; padding:8px;">لا توجد فيديوهات ريلز مضافة بعد.</p>`; return; }
+      box.innerHTML = reelsList.map((r, i) => `
+        <div class="cat-box" style="margin-bottom:8px;">
+          <div class="item-row">
+            <div class="item-info">
+              <video src="${r.video}" class="item-thumb" muted playsinline></video>
+              <div style="min-width:0;">
+                <div style="font-weight:700;">${r.title}${r.price > 0 ? `<span class="pill-admin price-pill">${Number(r.price).toLocaleString('en-US')} ل.س</span>` : ''}</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);">${r.desc || ''}</div>
+              </div>
+            </div>
+            <button class="btn-icon del" onclick="deleteReel(${i})" title="حذف">✕</button>
           </div>
         </div>
       `).join('');
     }
 
-    window.toggleItemAvailable = async function(catIdx, itIdx) {
-      const item = currentMenu[catIdx].items[itIdx];
-      item.available = (item.available === false) ? true : false;
-      await saveMenuAndSettings();
-    };
+    function compressImage(file, maxW = 480, maxH = 480, q = 0.65) {
+      return new Promise((res, rej) => {
+        const reader = new FileReader(); reader.readAsDataURL(file);
+        reader.onload = (ev) => {
+          const img = new Image(); img.src = ev.target.result;
+          img.onload = () => {
+            let w = img.width, h = img.height;
+            if (w > h) { if (w > maxW) { h = Math.round((h * maxW) / w); w = maxW; } }
+            else { if (h > maxH) { w = Math.round((w * maxH) / h); h = maxH; } }
+            const c = document.createElement("canvas"); c.width = w; c.height = h;
+            c.getContext("2d").drawImage(img, 0, 0, w, h); res(c.toDataURL("image/jpeg", q));
+          }; img.onerror = rej;
+        }; reader.onerror = rej;
+      });
+    }
 
-    window.addCategory = async function() {
-      const input = document.getElementById("newCatName");
-      const name = input.value.trim();
-      const id = "sec-" + (name ? name.replace(/\s+/g, '-').toLowerCase() : Date.now());
-      currentMenu.push({ id, categoryName: name || "قسم جديد", items: [] });
-      input.value = "";
-      await saveMenuAndSettings();
-    };
-
-    window.deleteCategory = async function(catIdx) {
-      if (!confirm(`هل أنت متأكد من حذف قسم "${currentMenu[catIdx].categoryName}" بكل وجباته؟`)) return;
-      currentMenu.splice(catIdx, 1);
-      if (editingState.isEditing && editingState.catIdx === catIdx) window.cancelEditing();
-      await saveMenuAndSettings();
-    };
-
-    window.startEditItem = function(catIdx, itIdx) {
-      const cat = currentMenu[catIdx];
-      const item = cat.items[itIdx];
-      editingState = { isEditing: true, catIdx, itIdx };
-
-      document.getElementById("itemCatSelect").value = cat.id;
-      document.getElementById("itemName").value = item.name || "";
-      document.getElementById("itemPrepTime").value = Number(item.prepTime) > 0 ? item.prepTime : 20;
-      document.getElementById("itemPrice").value = (Number(item.price) > 0) ? item.price : "";
-      document.getElementById("itemDesc").value = item.desc || "";
-
-      if (item.img) {
-        compressedImageBase64 = item.img;
-        document.getElementById("previewImgEl").src = item.img;
+    window.handleFileSelect = async (e) => {
+      const file = e.target.files[0]; if (!file) return;
+      showLoading(true, "جاري ضغط الصورة...");
+      try {
+        compressedImageBase64 = await compressImage(file);
+        document.getElementById("previewImgEl").src = compressedImageBase64;
         document.getElementById("previewBox").style.display = "flex";
-        document.getElementById("previewStatus").innerText = "الصورة الحالية للوجبة";
-        document.getElementById("itemImg").value = item.img.startsWith("data:") ? "" : item.img;
-      } else { window.clearSelectedImage(); }
-
-      if (item.video) {
-        compressedVideoBase64 = item.video;
-        document.getElementById("previewVidEl").src = item.video;
-        document.getElementById("videoPreviewBox").style.display = "flex";
-        document.getElementById("videoPreviewStatus").innerText = "الفيديو الحالي للوجبة";
-        document.getElementById("itemVideoUrl").value = item.video.startsWith("data:") ? "" : item.video;
-      } else { window.clearSelectedVideo(); }
-
-      document.getElementById("itemFormTitle").innerText = "تعديل الوجبة";
-      document.getElementById("saveItemBtn").innerText = "حفظ التعديلات";
-      document.getElementById("cancelEditBtn").style.display = "block";
-      document.getElementById("itemFormCard").scrollIntoView({ behavior: 'smooth' });
+        document.getElementById("previewStatus").innerText = "تم ضغط الصورة بنجاح";
+        document.getElementById("itemImg").value = "";
+      } catch (err) { alert("خطأ أثناء معالجة الصورة"); }
+      showLoading(false);
     };
 
-    window.cancelEditing = function() {
+    window.clearSelectedImage = () => {
+      compressedImageBase64 = ""; document.getElementById("imageFileInput").value = "";
+      document.getElementById("previewBox").style.display = "none"; document.getElementById("previewImgEl").src = "";
+    };
+
+    async function loadMenu() {
+      showLoading(true);
+      try {
+        const data = (await get(ref(db, "menu"))).val();
+        const rawList = Array.isArray(data) ? data : (data ? Object.values(data) : []);
+        const sEntry = rawList.find(x => x && (x.id === "__foodies_settings__" || x.isSettings));
+        if (sEntry) storeSettings = { isOpen: sEntry.isOpen !== false, promoCode: sEntry.promoCode || "", promoDiscount: Number(sEntry.promoDiscount) || 0 };
+        const rEntry = rawList.find(x => x && (x.id === "__foodies_reels__" || x.isReels));
+        reelsList = (rEntry && Array.isArray(rEntry.reels)) ? rEntry.reels : [];
+        currentMenu = rawList.filter(x => x && !x.isSettings && !x.isReels && x.id !== "__foodies_settings__" && x.id !== "__foodies_reels__");
+        renderStoreSettingsUI(); renderSelect(); renderView(); renderReelsList();
+      } catch (err) { alert("خطأ في الاتصال: " + err.message); }
+      showLoading(false);
+    }
+
+    window.seedInitialMenu = async () => {
+      if (!confirm("هل تريد استعادة القائمة الافتراضية؟ سيتم استبدال البيانات الحالية.")) return;
+      currentMenu = [{ id: "sec-فروج-ومشوي", categoryName: "الفروج والمشوي", items: [{ name: "فروج شواية", prepTime: 30, price: 85000, available: true, desc: "فروج مشوي متبل", img: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=400&q=80" }] }];
+      if (await saveAllData()) alert("تم الرفع بنجاح!");
+    };
+
+    function renderSelect() {
+      const sel = document.getElementById("itemCatSelect");
+      sel.innerHTML = currentMenu.length ? currentMenu.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('') : `<option value="">لا توجد أقسام</option>`;
+    }
+
+    function renderView() {
+      const box = document.getElementById("menuStructureView");
+      if (!currentMenu.length) { box.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:10px;">لا توجد أقسام مضافة بعد.</p>`; return; }
+      box.innerHTML = currentMenu.map((cat, cIdx) => `
+        <div class="cat-box">
+          <div class="cat-header"><span class="cat-title">${cat.categoryName} (${cat.items ? cat.items.length : 0})</span><button class="btn-del-cat" onclick="deleteCategory(${cIdx})">حذف القسم</button></div>
+          <div>${(cat.items || []).map((it, iIdx) => {
+            const p = Number(it.price), av = it.available !== false;
+            return `<div class="item-row ${av ? '' : 'sold-out'}"><div class="item-info"><img src="${it.img || ''}" class="item-thumb"><div style="min-width:0;"><div style="font-weight:700;">${it.name || 'بدون اسم'}<span class="pill-admin prep-pill">${Number(it.prepTime) > 0 ? it.prepTime : 20} د</span>${p > 0 ? `<span class="pill-admin price-pill">${p.toLocaleString('en-US')} ل.س</span>` : ''}</div><div style="font-size:0.74rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.desc || ''}</div></div></div><div class="item-actions"><button class="btn-avail ${av ? 'on' : 'off'}" onclick="toggleItemAvailable(${cIdx}, ${iIdx})">${av ? 'متوفر' : 'نفد'}</button><button class="btn-icon" onclick="startEditItem(${cIdx}, ${iIdx})">✎</button><button class="btn-icon del" onclick="deleteItem(${cIdx}, ${iIdx})">✕</button></div></div>`;
+          }).join('')}</div>
+        </div>
+      `).join('');
+    }
+
+    window.toggleItemAvailable = async (c, i) => { currentMenu[c].items[i].available = (currentMenu[c].items[i].available === false); await saveAllData(); };
+    window.addCategory = async () => {
+      const inp = document.getElementById("newCatName"), name = inp.value.trim();
+      currentMenu.push({ id: "sec-" + (name ? name.replace(/\s+/g, '-').toLowerCase() : Date.now()), categoryName: name || "قسم جديد", items: [] });
+      inp.value = ""; await saveAllData();
+    };
+    window.deleteCategory = async (c) => {
+      if (!confirm(`حذف قسم "${currentMenu[c].categoryName}"؟`)) return;
+      currentMenu.splice(c, 1); if (editingState.isEditing && editingState.catIdx === c) window.cancelEditing();
+      await saveAllData();
+    };
+
+    window.startEditItem = (c, i) => {
+      const cat = currentMenu[c], it = cat.items[i]; editingState = { isEditing: true, catIdx: c, itIdx: i };
+      document.getElementById("itemCatSelect").value = cat.id;
+      document.getElementById("itemName").value = it.name || "";
+      document.getElementById("itemPrepTime").value = Number(it.prepTime) > 0 ? it.prepTime : 20;
+      document.getElementById("itemPrice").value = Number(it.price) > 0 ? it.price : "";
+      document.getElementById("itemDesc").value = it.desc || "";
+      if (it.img) { compressedImageBase64 = it.img; document.getElementById("previewImgEl").src = it.img; document.getElementById("previewBox").style.display = "flex"; document.getElementById("itemImg").value = it.img.startsWith("data:") ? "" : it.img; } else window.clearSelectedImage();
+      document.getElementById("itemFormTitle").innerText = "تعديل الوجبة"; document.getElementById("saveItemBtn").innerText = "حفظ التعديلات";
+      document.getElementById("cancelEditBtn").style.display = "block"; document.getElementById("itemFormCard").scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.cancelEditing = () => {
       editingState = { isEditing: false, catIdx: null, itIdx: null };
-      document.getElementById("itemName").value = "";
-      document.getElementById("itemPrepTime").value = "20";
-      document.getElementById("itemPrice").value = "";
-      document.getElementById("itemDesc").value = "";
-      document.getElementById("itemImg").value = "";
-      document.getElementById("itemVideoUrl").value = "";
-      window.clearSelectedImage();
-      window.clearSelectedVideo();
-      document.getElementById("itemFormTitle").innerText = "إضافة وجبة ضمن قسم";
-      document.getElementById("saveItemBtn").innerText = "+ حفظ الوجبة في المنيو";
+      ["itemName", "itemPrice", "itemDesc", "itemImg"].forEach(id => document.getElementById(id).value = "");
+      document.getElementById("itemPrepTime").value = "20"; window.clearSelectedImage();
+      document.getElementById("itemFormTitle").innerText = "إضافة وجبة ضمن قسم"; document.getElementById("saveItemBtn").innerText = "+ حفظ الوجبة في المنيو";
       document.getElementById("cancelEditBtn").style.display = "none";
     };
 
-    window.saveItemAction = async function() {
-      const catId = document.getElementById("itemCatSelect").value;
-      const name = document.getElementById("itemName").value.trim();
-      const prepTimeVal = parseInt(document.getElementById("itemPrepTime").value, 10);
-      const prepTime = (prepTimeVal && prepTimeVal > 0) ? prepTimeVal : 20;
-      const priceVal = parseFloat(document.getElementById("itemPrice").value);
-      const price = (priceVal && priceVal > 0) ? priceVal : 0;
-      const desc = document.getElementById("itemDesc").value.trim();
-      const directImgUrl = document.getElementById("itemImg").value.trim();
-      const directVidUrl = document.getElementById("itemVideoUrl").value.trim();
-
-      let img = compressedImageBase64 || directImgUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80";
-      let video = compressedVideoBase64 || directVidUrl || "";
-
+    window.saveItemAction = async () => {
+      const catId = document.getElementById("itemCatSelect").value, name = document.getElementById("itemName").value.trim();
+      const prepTime = parseInt(document.getElementById("itemPrepTime").value, 10) || 20, price = parseFloat(document.getElementById("itemPrice").value) || 0;
+      const desc = document.getElementById("itemDesc").value.trim(), img = compressedImageBase64 || document.getElementById("itemImg").value.trim() || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80";
       if (editingState.isEditing) {
-        const oldCat = currentMenu[editingState.catIdx];
-        const prevAvail = oldCat.items[editingState.itIdx].available !== false;
-        const updatedItem = { name, prepTime, price, desc, img, video, available: prevAvail };
-
-        if (oldCat.id === catId) {
-          oldCat.items[editingState.itIdx] = updatedItem;
-        } else {
-          oldCat.items.splice(editingState.itIdx, 1);
-          let targetCat = currentMenu.find(c => c.id === catId) || currentMenu[0];
-          if (!targetCat.items) targetCat.items = [];
-          targetCat.items.push(updatedItem);
-        }
-        window.cancelEditing();
+        const oldCat = currentMenu[editingState.catIdx], prevAv = oldCat.items[editingState.itIdx].available !== false;
+        const upd = { name, prepTime, price, desc, img, available: prevAv };
+        if (oldCat.id === catId) oldCat.items[editingState.itIdx] = upd;
+        else { oldCat.items.splice(editingState.itIdx, 1); const t = currentMenu.find(x => x.id === catId) || currentMenu[0]; (t.items = t.items || []).push(upd); }
       } else {
-        let cat = currentMenu.find(c => c.id === catId);
-        if (!cat) {
-          if (currentMenu.length === 0) currentMenu.push({ id: "sec-عام", categoryName: "عام", items: [] });
-          cat = currentMenu[0];
-        }
-        if (!cat.items) cat.items = [];
-        cat.items.push({ name, prepTime, price, desc, img, video, available: true });
-        window.cancelEditing();
+        let cat = currentMenu.find(x => x.id === catId);
+        if (!cat) { if (!currentMenu.length) currentMenu.push({ id: "sec-عام", categoryName: "عام", items: [] }); cat = currentMenu[0]; }
+        (cat.items = cat.items || []).push({ name, prepTime, price, desc, img, available: true });
       }
-
-      const ok = await saveMenuAndSettings();
-      if (ok) alert("تم الحفظ بنجاح!");
+      window.cancelEditing();
+      if (await saveAllData()) alert("تم الحفظ بنجاح!");
     };
 
-    window.deleteItem = async function(catIdx, itIdx) {
+    window.deleteItem = async (c, i) => {
       if (!confirm("هل تريد حذف هذه الوجبة؟")) return;
-      currentMenu[catIdx].items.splice(itIdx, 1);
-      if (editingState.isEditing && editingState.catIdx === catIdx && editingState.itIdx === itIdx) window.cancelEditing();
-      await saveMenuAndSettings();
+      currentMenu[c].items.splice(i, 1);
+      if (editingState.isEditing && editingState.catIdx === c && editingState.itIdx === i) window.cancelEditing();
+      await saveAllData();
     };
   </script>
 </body>
