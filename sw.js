@@ -1,3 +1,4 @@
+const CACHE_NAME = 'foodies-v3';
 let activeTimerId = null;
 
 self.addEventListener('install', (event) => {
@@ -5,7 +6,18 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  // Network-first so menu & Firebase updates are always fresh
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
+  );
 });
 
 self.addEventListener('notificationclick', (event) => {
@@ -54,7 +66,7 @@ self.addEventListener('message', (event) => {
           const oldNotifs = await self.registration.getNotifications({ tag: 'foodies-live-order' });
           oldNotifs.forEach((n) => n.close());
 
-          await self.registration.showNotification(`✅ طلبك رقم #${orderNum} جاهز الآن!`, {
+          await self.registration.showNotification(`طلبك رقم #${orderNum} جاهز الآن!`, {
             body: `مطعم foodies.a: وجبتك جاهزة الآن، نتمنى لك وجبة شهية!`,
             icon: 'https://i.postimg.cc/dthHNrBG/IMG-20261107-WA0006.jpg',
             badge: 'https://i.postimg.cc/dthHNrBG/IMG-20261107-WA0006.jpg',
@@ -62,7 +74,7 @@ self.addEventListener('message', (event) => {
             renotify: true,
             requireInteraction: true,
             silent: false,
-            vibrate: [800, 250, 800, 250, 800, 250, 800, 250, 1000]
+            vibrate: [800, 250, 800, 250, 800, 250, 800]
           });
 
           resolve();
@@ -73,7 +85,7 @@ self.addEventListener('message', (event) => {
         const mins = String(Math.floor(totalSec / 60)).padStart(2, '0');
         const secs = String(totalSec % 60).padStart(2, '0');
 
-        await self.registration.showNotification(`⏱ المتبقي ${mins}:${secs} | طلب #${orderNum}`, {
+        await self.registration.showNotification(`المتبقي ${mins}:${secs} | طلب #${orderNum}`, {
           body: `طلبك قيد التحضير في foodies.a • يجهز الساعة ${readyClockStr}`,
           icon: 'https://i.postimg.cc/dthHNrBG/IMG-20261107-WA0006.jpg',
           badge: 'https://i.postimg.cc/dthHNrBG/IMG-20261107-WA0006.jpg',
@@ -91,4 +103,4 @@ self.addEventListener('message', (event) => {
     event.waitUntil(countdownPromise);
   }
 });
-        
+          
